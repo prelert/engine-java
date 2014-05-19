@@ -1,8 +1,14 @@
 engine-java
 ===========
 
-A Java client to the Prelert Anomaly Detective Engine REST API - automated anomaly detection and behavioral analytics. 
-Use this client to create jobs, stream data to them and review the results.
+A Java client to the Prelert Anomaly Detective Engine REST API. This provides automated anomaly detection and behavioral analytics for big data. The client creates analysis jobs, streams data to them and queries the results.
+
+Prior to using the client, the Engine API needs to be installed and setup. Please follow these steps:
+
+- Have a read of our documentation: http://www.prelert.com/docs/engine_api/latest
+- Download and install the Anomaly Detective Engine API from here: http://www.prelert.com/reg/anomaly-detective-engine-api.html
+- We recommend you try our quick start example: http://www.prelert.com/docs/engine_api/latest/quick-start.html
+
 
 
 Building 
