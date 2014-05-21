@@ -163,8 +163,9 @@ public class Farequote
 	}
 	
 	/**
-	 * @throws JsonProcessingException 
+	 * Print the bucket as a JSON document.
 	 * 
+	 * @throws JsonProcessingException 
 	 */
 	static public void printBucket(Bucket bucket) 
 	throws JsonProcessingException
@@ -248,7 +249,7 @@ public class Farequote
 				return;
 			}
 
-			boolean success = engineApiClient.streamingUpload(baseUrl, jobId, fileStream, true);
+			boolean success = engineApiClient.streamingUpload(baseUrl, jobId, fileStream, false);
 	 		if (success == false)
 	 		{
 				s_Logger.error("Failed to upload file to job " + jobId);
@@ -306,11 +307,12 @@ public class Farequote
 	 		{
 	 			String bucketId = allBuckets.get(0).getId();
 	 			
+	 		    // ask for the bucket and its anomaly records
 	 			SingleDocument<Bucket> bucket = 
 	 					engineApiClient.getBucket(baseUrl, jobId, bucketId, true);
 	 			if (bucket.isExists() == false)
 	 			{
-	 				// possible error
+	 				// error, where has the bucket gone?
 	 				reportApiErrorMessage(engineApiClient.getLastError());	 				
 	 			}
 	 			else		
@@ -322,7 +324,7 @@ public class Farequote
 	 						bucket.getDocument().getAnomalyScore());
 	 				
 	 				System.out.println(msg);
-	 				printBucket(bucket.getDocument());
+	 				printBucket(bucket.getDocument());	
 	 			}
 	 		}
 	 		
