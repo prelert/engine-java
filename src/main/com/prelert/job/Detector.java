@@ -29,8 +29,8 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 /**
  * Defines the fields to be used in the analysis. 
- * <code>Fieldname</code> must be set and only one of <code>ByFieldName</code> 
- * and <code>OverFieldName</code> should be set.
+ * <code>fieldname</code> must be set and only one of <code>byFieldName</code> 
+ * and <code>overFieldName</code> should be set.
  */
 @JsonInclude(Include.NON_NULL)
 public class Detector
@@ -79,13 +79,14 @@ public class Detector
 			}));
 	
 	/**
-	 * The set of count functions requiring a by or over field
+	 * The set of functions that do not require a field, by field or over field
 	 */
-	static public final Set<String> COUNT_BY_OVER_FUNCTIONS = 
+	static public final Set<String> COUNT_WITHOUT_FIELD_FUNCTIONS = 
 			new HashSet<String>(Arrays.<String>asList(new String [] {
+				COUNT,
 				HIGH_COUNT, 
 				LOW_COUNT,
-				NON_ZERO_COUNT, NZC,
+				NON_ZERO_COUNT, NZC
 			}));
 	
 

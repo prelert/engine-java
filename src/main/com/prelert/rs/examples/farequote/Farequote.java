@@ -58,10 +58,9 @@ import com.prelert.rs.data.SingleDocument;
  * the first 5 lines of which should resemble:
  * 
  * time,airline,responsetime,sourcetype
- * 2013-01-28 00:00:00Z,AAL,132.2046,farequote
- * 2013-01-28 00:00:00Z,JZA,990.4628,farequote
- * 2013-01-28 00:00:00Z,JBU,877.5927,farequote
- * 2013-01-28 00:00:00Z,KLM,1355.4812,farequote
+ * 2014-06-23 00:00:00Z,AAL,132.2046,farequote
+ * 2014-06-23 00:00:00Z,JZA,990.4628,farequote
+ * 2014-06-23 00:00:00Z,JBU,877.5927,farequote
  * 
  * The <code>main</code> method takes 2 arguments - the path to farequote.csv
  * and optionally the Url of the REST API. If the Url is not passed 
@@ -72,7 +71,7 @@ public class Farequote
 	/**
 	 * The default base Url
 	 */
-	static final public String API_BASE_URL = "http://localhost:8080/engine/v0.3";
+	static final public String API_BASE_URL = "http://localhost:8080/engine/v1";
 	
 	static final private Logger s_Logger = Logger.getLogger(Farequote.class);
 	
@@ -143,7 +142,7 @@ public class Farequote
 	 */
 	static public void printBucketScoresHeader()
 	{
-		System.out.println("Time, Id, Anomaly Score");
+		System.out.println("Time, Bucket Id, Anomaly Score, Unusual Score");
 	}
 	
 	
@@ -157,8 +156,11 @@ public class Farequote
 	{
 		for (Bucket bucket : buckets)
 		{
-			System.out.println(bucket.getTimestamp().toString() + ',' + bucket.getId() +
-					',' + bucket.getAnomalyScore());
+			System.out.println(String.format("%s,%s,%f,%f", 
+					bucket.getTimestamp().toString(),
+					bucket.getId(),
+					bucket.getAnomalyScore(),
+					bucket.getUnusualScore()));
 		}
 	}
 	
@@ -261,7 +263,7 @@ public class Farequote
 	 		engineApiClient.closeJob(baseUrl, jobId);
 	 				
 	 		// results are available immediately after the close
-	 		Pagination<Bucket> page = engineApiClient.getBuckets(baseUrl, jobId, false);
+	 		Pagination<Bucket> page = engineApiClient.getBuckets(baseUrl, jobId, false, 0.0, 0.0);
 	 		if (page.getDocumentCount() == 0 && engineApiClient.getLastError() == null)
 	 		{
 				s_Logger.error("Error reading analysis results");

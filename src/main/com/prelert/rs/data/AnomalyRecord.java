@@ -18,7 +18,10 @@
 
 package com.prelert.rs.data;
 
+import java.util.Date;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 /**
@@ -32,13 +35,11 @@ public class AnomalyRecord
 	/**
 	 * Serialisation fields
 	 */
-	static final public String DETECTOR_NAME = "detectorName";
 	static final public String TYPE = "record";
 
 	/**
 	 * Result fields (all detector types)
 	 */
-	static final public String ANOMALY_SCORE =  "anomalyScore";
 	static final public String PROBABILITY = "probability";
 	static final public String BY_FIELD_NAME = "byFieldName";
 	static final public String BY_FIELD_VALUE = "byFieldValue";
@@ -47,7 +48,7 @@ public class AnomalyRecord
 	static final public String FUNCTION = "function";
 	static final public String TYPICAL = "typical";
 	static final public String ACTUAL = "actual";
-
+	
 	/**
 	 * Metric Results (including population metrics)
 	 */
@@ -61,14 +62,13 @@ public class AnomalyRecord
 	static final public String IS_OVERALL_RESULT = "isOverallResult";
 
 	/**
-	 * Simple count detector
+	 * Normalisation
 	 */
-	static final public String IS_SIMPLE_COUNT = "isSimpleCount";
+	static final public String ANOMALY_SCORE = "anomalyScore";
+	static final public String UNUSUAL_SCORE = "unusualScore";
 
-	private String m_DetectorName;
 
-	private Double m_AnomalyScore;
-	private Double m_Probability;
+	private double m_Probability;
 	private String m_ByFieldName;
 	private String m_ByFieldValue;
 	private String m_PartitionFieldName;
@@ -83,8 +83,10 @@ public class AnomalyRecord
 	private String m_OverFieldValue;
 	private Boolean m_IsOverallResult;
 
-	private Boolean m_IsSimpleCount;
-
+	private double m_AnomalyScore;
+	private double m_UnusualScore;
+	private Date   m_Timestamp;
+	
 
 	public Double getAnomalyScore()
 	{
@@ -96,12 +98,32 @@ public class AnomalyRecord
 		m_AnomalyScore = anomalyScore;
 	}
 
-	public Double getProbability()
+	public double getUnusualScore()
+	{
+		return m_UnusualScore;
+	}
+	
+	public void setUnusualScore(double anomalyScore)
+	{
+		m_UnusualScore = anomalyScore;
+	}
+	
+	public Date getTimestamp() 
+	{
+		return m_Timestamp;
+	}
+	
+	public void setTimestamp(Date timestamp) 
+	{
+		m_Timestamp = timestamp;
+	}
+	
+	public double getProbability()
 	{
 		return m_Probability;
 	}
 
-	public void setProbability(Double value)
+	public void setProbability(double value)
 	{
 		m_Probability = value;
 	}
@@ -207,37 +229,121 @@ public class AnomalyRecord
 		m_OverFieldValue = value;
 	}
 
-
+	@JsonProperty(IS_OVERALL_RESULT)
 	public Boolean isOverallResult()
 	{
 		return m_IsOverallResult;
 	}
 
+	@JsonProperty(IS_OVERALL_RESULT)
 	public void setOverallResult(boolean value)
 	{
 		m_IsOverallResult = value;
 	}
-
 	
-	public String getDetectorName()
-	{
-		return m_DetectorName;
-	}
-
-	public void setDetectorName(String name)
-	{
-		m_DetectorName = name;
-	}
 	
-
-	public Boolean isSimpleCount()
+	private boolean bothNullOrEqual(Object o1, Object o2)
 	{
-		return m_IsSimpleCount;
+		if (o1 == null && o2 == null)
+		{
+			return true;
+		}
+		
+		if (o1 == null || o2 == null)
+		{
+			return false;
+		}
+		
+		return o1.equals(o2);	
 	}
 
-	public void setIsSimpleCount(boolean value)
+	@Override
+	public int hashCode()
 	{
-		m_IsSimpleCount = value;
+		// ID is NOT included in the hash, so that a record from the data store
+		// will hash the same as a record representing the same anomaly that did
+		// not come from the data store
+
+		final int prime = 31;
+		int result = 1;
+		long temp;
+		temp = Double.doubleToLongBits(m_Probability);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
+		temp = Double.doubleToLongBits(m_AnomalyScore);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
+		temp = Double.doubleToLongBits(m_UnusualScore);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
+		result = prime * result
+				+ ((m_Actual == null) ? 0 : m_Actual.hashCode());
+		result = prime * result
+				+ ((m_ByFieldName == null) ? 0 : m_ByFieldName.hashCode());
+		result = prime * result
+				+ ((m_ByFieldValue == null) ? 0 : m_ByFieldValue.hashCode());
+		result = prime * result
+				+ ((m_FieldName == null) ? 0 : m_FieldName.hashCode());
+		result = prime * result
+				+ ((m_Function == null) ? 0 : m_Function.hashCode());
+		result = prime
+				* result
+				+ ((m_IsOverallResult == null) ? 0 : m_IsOverallResult
+						.hashCode());
+		result = prime * result
+				+ ((m_OverFieldName == null) ? 0 : m_OverFieldName.hashCode());
+		result = prime
+				* result
+				+ ((m_OverFieldValue == null) ? 0 : m_OverFieldValue.hashCode());
+		result = prime
+				* result
+				+ ((m_PartitionFieldName == null) ? 0 : m_PartitionFieldName
+						.hashCode());
+		result = prime
+				* result
+				+ ((m_PartitionFieldValue == null) ? 0 : m_PartitionFieldValue
+						.hashCode());
+		result = prime * result
+				+ ((m_Timestamp == null) ? 0 : m_Timestamp.hashCode());
+		result = prime * result
+				+ ((m_Typical == null) ? 0 : m_Typical.hashCode());
+
+		return result;
+	}	
+	
+	@Override 
+	public boolean equals(Object other)
+	{
+		if (this == other)
+		{
+			return true;
+		}
+		
+		if (other instanceof AnomalyRecord == false)
+		{
+			return false;
+		}
+		
+		AnomalyRecord that = (AnomalyRecord)other;
+
+		// ID is NOT compared, so that a record from the data store will compare
+		// equal to a record representing the same anomaly that did not come
+		// from the data store
+
+		boolean equal = this.m_Probability == that.m_Probability &&
+				this.m_AnomalyScore == that.m_AnomalyScore &&
+				this.m_UnusualScore == that.m_UnusualScore &&
+				bothNullOrEqual(this.m_Typical, that.m_Typical) &&
+				bothNullOrEqual(this.m_Actual, that.m_Actual) &&
+				bothNullOrEqual(this.m_Function, that.m_Function) &&
+				bothNullOrEqual(this.m_FieldName, that.m_FieldName) &&
+				bothNullOrEqual(this.m_ByFieldName, that.m_ByFieldName) &&
+				bothNullOrEqual(this.m_ByFieldValue, that.m_ByFieldValue) &&
+				bothNullOrEqual(this.m_PartitionFieldName, that.m_PartitionFieldName) &&
+				bothNullOrEqual(this.m_PartitionFieldValue, that.m_PartitionFieldValue) &&
+				bothNullOrEqual(this.m_OverFieldName, that.m_OverFieldName) &&
+				bothNullOrEqual(this.m_OverFieldValue, that.m_OverFieldValue) &&
+				bothNullOrEqual(this.m_IsOverallResult, that.m_IsOverallResult) &&
+				bothNullOrEqual(this.m_Timestamp, that.m_Timestamp);
+		
+		return equal;
 	}
 
 }

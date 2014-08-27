@@ -20,6 +20,7 @@ package com.prelert.rs.data;
 import com.fasterxml.jackson.core.io.JsonStringEncoder;
 
 
+
 /**
  * Encapsulates the an API error condition.
  * The errorCode identifies the error type and the message 
@@ -27,11 +28,11 @@ import com.fasterxml.jackson.core.io.JsonStringEncoder;
  * a Java Exception {@linkplain #getCause()} will return that
  * Exception else it returns <code>null</code>. 
  * 
- * @see ErrorCodes
+ * @see ErrorCode
  */
 public class ApiError 
 {
-	private long m_ErrorCode;
+	private ErrorCode m_ErrorCode;
 	private String m_Message;
 	private Throwable m_Cause;
 	
@@ -47,29 +48,29 @@ public class ApiError
 	 * Create a new ApiError from one of the list of error codes.
 	 * 
 	 * @param errorCode
-	 * @see ErrorCodes 
+	 * @see ErrorCode 
 	 */
-	public ApiError(long errorCode)
+	public ApiError(ErrorCode errorCode)
 	{
 		m_ErrorCode = errorCode;		
 	}
 	
 	/**
 	 * The error code
-	 * @see ErrorCodes
-	 * @return one of {@linkplain ErrorCodes}
+	 * @see ErrorCode
+	 * @return one of {@linkplain ErrorCode}
 	 */
-	public long getErrorCode()
+	public ErrorCode getErrorCode()
 	{
 		return m_ErrorCode;
 	}
 	
 	/**
 	 * Set the error code.
-	 * @see ErrorCodes
+	 * @see ErrorCode
 	 * @param value
 	 */
-	public void setErrorCode(long value)
+	public void setErrorCode(ErrorCode value)
 	{
 		m_ErrorCode = value;
 	}
@@ -131,9 +132,9 @@ public class ApiError
 			needComma = false;
 		}
 		
-		if (m_ErrorCode > 0)
+		if (m_ErrorCode != null)
 		{
-			builder.append("\n  \"errorCode\" : ").append(m_ErrorCode);
+			builder.append("\n  \"errorCode\" : ").append(m_ErrorCode.getValueString());
 			needComma = true;
 		}
 		

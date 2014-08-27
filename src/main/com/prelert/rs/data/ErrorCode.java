@@ -15,11 +15,13 @@
  * limitations under the License.                                           *
  *                                                                          *
  ***************************************************************************/
-
 package com.prelert.rs.data;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 /**
- * Static error codes returned in reponse to internal errors in the API.
+ * Static error codes returned in response to internal errors in the API.
  * The codes are grouped in the following way:
  * <ul>
  * <li>10XXX Codes are related to job creation</li>
@@ -30,135 +32,219 @@ package com.prelert.rs.data;
  * <li>60XXX Codes are related to errors from the REST API</li> 
  * </ul>
  */
-public class ErrorCodes 
+public enum ErrorCode 
 {
 	// job create errors
 	/**
 	 * The JSON configuration supplied to create a job 
 	 * could not be parsed. The JSON is invalid. 
 	 */
-	final public static int JOB_CONFIG_PARSE_ERROR = 10101;
+	JOB_CONFIG_PARSE_ERROR(10101),
 	
 	/**
 	 * The job configuration JSON contains a field that isn't
 	 * recognised
 	 */
-	final public static int JOB_CONFIG_UNKNOWN_FIELD_ERROR = 10102; 
+	JOB_CONFIG_UNKNOWN_FIELD_ERROR(10102), 
 	
 	/**
 	 * When creating a new job from an existing job this error
 	 * is returned if the reference job id is not known
 	 */
-	final public static int UNKNOWN_JOB_REFERENCE = 10103;
+	UNKNOWN_JOB_REFERENCE(10103),
 	
 	/**
 	 * The value provided in one of the job configuration fields
 	 * is not allowed for example some fields cannot be a number < 0.
 	 */
-	final public static int INVALID_VALUE = 10104;
-	
+	INVALID_VALUE(10104),
+
 	/**
 	 * The function argument is not recognised as one of
 	 * the valid list of functions.
 	 * @see com.prelert.job.Detector#ANALYSIS_FUNCTIONS
 	 */
-	final public static int UNKNOWN_FUNCTION = 10105;
+	UNKNOWN_FUNCTION(10105),
 		
 	/**
 	 * In the {@link com.prelert.job.Detector} some combinations
 	 * of fieldName/byFieldName/overFieldName and function are invalid.
 	 */
-	final public static int INVALID_FIELD_SELECTION = 10106;
+	INVALID_FIELD_SELECTION(10106),
 	
 	/**
 	 * The job configuration is not fully defined.
 	 */
-	final public static int INCOMPLETE_CONFIGURATION = 10107;
+	INCOMPLETE_CONFIGURATION(10107),
 	
 	/**
 	 * The date format pattern cannot be interpreted as a valid 
 	 * Java date format pattern.
 	 * @see java.text.SimpleDateFormat
 	 */
-	final public static int INVALID_DATE_FORMAT = 10108;
+	INVALID_DATE_FORMAT(10108),
+
+	/**
+	 * The job will not be created because it violates one or
+	 * more license constraints.
+	 */
+	LICENSE_VIOLATION(10109),
 	
+	/**
+	 * The job could not be created because the supplied Job Id
+	 * is not unique or is already used by another job.
+	 */
+	JOB_ID_TAKEN(10110),
 	
+	/**
+	 * The job id contains an upper case character or one of the
+	 * following invalid characters:
+	 * [\\, /, *, ?, \", <, >, |,  , ,]
+	 */
+	PROHIBITIED_CHARACTER_IN_JOB_ID(10111),
+	
+	/**
+	 * The submitted job id contains too many characters. 
+	 */
+	JOB_ID_TOO_LONG(10112),
+	
+
 	// Data store errors
 	/**
 	 * A generic exception from the data store
 	 */
-	final public static int DATA_STORE_ERROR = 20001;
+	DATA_STORE_ERROR(20001),
 	
 	/**
 	 * The job cannot be found in the data store
 	 */
-	final public static int MISSING_JOB_ERROR = 20101;
+	MISSING_JOB_ERROR(20101),
 	
 	/**
 	 * The persisted detector state cannot be recovered
 	 */
-	final public static int MISSING_DETECTOR_STATE = 20102;	
-	
+	MISSING_DETECTOR_STATE(20102),	
 	
 	
 	// data upload errors
 	/**
 	 * Generic data error
 	 */
-	final public static int DATA_ERROR = 30001;
+	DATA_ERROR(30001),
 	
 	/**
 	 * In the case of CSV data if a job is configured to use
 	 * a certain field and that field isn't present in the CSV
 	 * header this error is returned.
 	 */
-	final public static int MISSING_FIELD = 30101;
+	MISSING_FIELD(30101),
 	
 	/**
 	 * Data was defined to be gzip encoded ('Content-Encoding:gzip') 
 	 * but isn't actually.
 	 */
-	final public static int UNCOMPRESSED_DATA = 30102;
+	UNCOMPRESSED_DATA(30102),
 	
+	/**
+	 * As a proportion of all the records sent too many
+	 * are either missing a date or the date cannot be parsed. 
+	 */
+	TOO_MANY_BAD_DATES(30103),
 	
+	/**
+	 * As a proportion of all the records sent a high number are
+	 * missing required fields or cannot be parsed. 
+	 */
+	TOO_MANY_BAD_RECORDS(30104),
+	
+	/**
+	 * As a proportion of all the records sent a high number are not
+	 * in chronological order. 
+	 */
+	TOO_MANY_OUT_OF_ORDER_RECORDS(30105),
+
 	
 	// native process errors
 	/**
 	 * An unknown error has occurred in the Native process
 	 */
-	final public static int NATIVE_PROCESS_ERROR = 40001;
+	NATIVE_PROCESS_ERROR(40001),
 
 	/**
 	 * An error occurred starting the native process
 	 */
-	final public static int NATIVE_PROCESS_START_ERROR = 40101;
+	NATIVE_PROCESS_START_ERROR(40101),
 	
 	/**
 	 * An error occurred writing data to the native process
 	 */
-	final public static int NATIVE_PROCESS_WRITE_ERROR = 40102;
+	NATIVE_PROCESS_WRITE_ERROR(40102),
 	
 	/**
-	 * Certain operations e.g. delete cannot be applied 
-	 * to running jobs.
+	 * The native autodetect process will only accept a single stream 
+	 * of data at a time. It is an error to try to upload data to the same
+	 * job through multiple connections. Additionally certain operations such 
+	 * as delete cannot be applied to a job that is actively processing data
+	 * and will result in this error condition.
 	 */
-	final public static int NATIVE_PROCESS_RUNNING_ERROR = 40103;
+	NATIVE_PROCESS_CONCURRENT_USE_ERROR(40103),
 	
 	
 	// Log file reading errors
 	/**
 	 * The log directory does not exist
 	 */
-	final public static int CANNOT_OPEN_DIRECTORY = 50101;
+	CANNOT_OPEN_DIRECTORY(50101),
 	
 	/**
 	 * The log file cannot be read
 	 */
-	final public static int MISSING_LOG_FILE = 50102;
+	MISSING_LOG_FILE(50102),
 	
 	// Rest API errors
 	/**
 	 * The date query parameter is un-parsable as a date
 	 */
-	final public static int UNPARSEABLE_DATE_ARGUMENT = 60101; 
+	UNPARSEABLE_DATE_ARGUMENT(60101),
+	
+	/**
+	 * The argument to the sort query parameter is not a 
+	 * recognised sort field
+	 */
+	INVALID_SORT_FIELD(60102);
+	
+
+	private long m_ErrorCode;
+	private String m_ValueString;
+	
+	private ErrorCode(long code)
+	{
+		m_ErrorCode = code;
+		m_ValueString = Long.toString(code);
+	}
+	
+	public long getValue()
+	{
+		return m_ErrorCode;
+	}
+	
+	public String getValueString()
+	{
+		return m_ValueString;
+	}
+	
+	@JsonCreator
+	static public ErrorCode fromCode(@JsonProperty("errorCode") long errorCode)
+	{
+		for (ErrorCode e : ErrorCode.values())
+		{
+			if (errorCode == e.getValue())
+			{
+				return e;
+			}
+		}
+		
+		throw new IllegalArgumentException("The code " + errorCode + 
+				" is not a valid error code");
+	}
 }

@@ -10,7 +10,7 @@
 
   <groupId>com.prelert.client</groupId>
   <artifactId>prelertEngineApiClient</artifactId>
-  <version>0.3.8</version>
+  <version>1.0.0</version>
   <packaging>jar</packaging>
 
   <name>prelertEngineApiClient</name>
