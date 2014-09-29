@@ -160,7 +160,7 @@ public class Farequote
 					bucket.getTimestamp().toString(),
 					bucket.getId(),
 					bucket.getAnomalyScore(),
-					bucket.getUnusualScore()));
+					bucket.getMaxNormalizedProbability()));
 		}
 	}
 	

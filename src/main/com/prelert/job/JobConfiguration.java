@@ -22,6 +22,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+
 /**
  * This class encapsulates all the data required to create a new job it
  * does not represent the state of a created job (see {@linkplain JobDetails}
@@ -36,26 +37,26 @@ public class JobConfiguration
 	/**
 	 * Characters that cannot be in a job id: '\\', '/', '*', '?', '"', '<', '>', '|', ' ', ','
 	 */
-	static public Set<Character> PROHIBITED_JOB_ID_CHARACTERS = 
+	static final public Set<Character> PROHIBITED_JOB_ID_CHARACTERS = 
 			new HashSet<>(Arrays.asList('\\', '/', '*', '?', '"', '<', '>', '|', ' ', ',' ));
 			
 	/**
 	 * Max number of chars in a job id
 	 */
-	static public int MAX_JOB_ID_LENGTH = 64;
+	static final public int MAX_JOB_ID_LENGTH = 64;
 	
 	private String m_ID;
 	private String m_Description;
-		
+	
 	private AnalysisConfig m_AnalysisConfig;
 	private AnalysisLimits m_AnalysisLimits;
 	private DataDescription m_DataDescription;
 	private String m_ReferenceJobId;
 	private Long m_Timeout;
 	
-	
 	public JobConfiguration()
 	{
+
 	}
 	
 	public JobConfiguration(String jobReferenceId)
@@ -69,6 +70,7 @@ public class JobConfiguration
 		this();
 		m_AnalysisConfig = analysisConfig;
 	}
+	
 	
 	/**
 	 * The human readable job Id 
@@ -167,8 +169,7 @@ public class JobConfiguration
 	{
 		m_Timeout = timeout;
 	}
-	
-	
+		
 	/**
 	 * If not set the input data is assumed to be csv with a '_time' field 
 	 * in epoch format. 
@@ -226,5 +227,5 @@ public class JobConfiguration
 			return m_JobConfig;
 		}
 	}
-
+	
 }

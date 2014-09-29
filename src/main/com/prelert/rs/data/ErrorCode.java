@@ -15,6 +15,7 @@
  * limitations under the License.                                           *
  *                                                                          *
  ***************************************************************************/
+
 package com.prelert.rs.data;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -107,6 +108,13 @@ public enum ErrorCode
 	 * The submitted job id contains too many characters. 
 	 */
 	JOB_ID_TOO_LONG(10112),
+	
+	/**
+	 * fieldnames including over, by and partition fields cannot
+	 * contain any of these characters:
+	 * [, ], (, ), =, ", \, -
+	 */
+	PROHIBITIED_CHARACTER_IN_FIELD_NAME(10113),
 	
 
 	// Data store errors

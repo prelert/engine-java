@@ -20,6 +20,7 @@ package com.prelert.rs.data;
 
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -30,7 +31,7 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 /**
  * Bucket Result POJO 
  */
-@JsonIgnoreProperties({"epoch", "epochString", "id"})
+@JsonIgnoreProperties({"epoch", "detectors"})
 @JsonInclude(Include.NON_NULL)
 public class Bucket 
 {
@@ -41,20 +42,20 @@ public class Bucket
 	public static final String TIMESTAMP = "timestamp";
 	public static final String RAW_ANOMALY_SCORE =  "rawAnomalyScore";
 	public static final String ANOMALY_SCORE =  "anomalyScore";
-	public static final String UNUSUAL_SCORE =  "unusualScore";
+	public static final String MAX_NORMALIZED_PROBABILITY =  "maxNormalizedProbability";
 	public static final String RECORD_COUNT = "recordCount";
 	public static final String EVENT_COUNT = "eventCount";
 	public static final String DETECTORS = "detectors";
 	public static final String RECORDS = "records";
 	
-	
-	static public final String TYPE = "bucket";
+	public static final String TYPE = "bucket";
+
 	
 	private String m_Id;
 	private Date m_Timestamp;
 	private double m_RawAnomalyScore;	
 	private double m_AnomalyScore;	
-	private double m_UnusualScore;	
+	private double m_MaxNormalizedProbability;	
 	private int m_RecordCount;
 	private List<Detector> m_Detectors;
 	private long m_Epoch;
@@ -64,6 +65,7 @@ public class Bucket
 	public Bucket()
 	{
 		m_Detectors = new ArrayList<>();
+		m_Records = Collections.emptyList();
 	}
 	
 	/**
@@ -95,15 +97,15 @@ public class Bucket
 	
 	public void setTimestamp(Date timestamp) 
 	{
-		this.m_Timestamp = timestamp;
+		m_Timestamp = timestamp;
 		
 		// epoch in seconds
 		m_Epoch = m_Timestamp.getTime() / 1000;
 		
 		m_Id = Long.toString(m_Epoch); 
 	}
-	
-	
+
+
 	public double getRawAnomalyScore() 
 	{
 		return m_RawAnomalyScore;
@@ -111,7 +113,7 @@ public class Bucket
 
 	public void setRawAnomalyScore(double rawAnomalyScore) 
 	{
-		this.m_RawAnomalyScore = rawAnomalyScore;
+		m_RawAnomalyScore = rawAnomalyScore;
 	}
 
 
@@ -122,21 +124,20 @@ public class Bucket
 
 	public void setAnomalyScore(double anomalyScore) 
 	{
-		this.m_AnomalyScore = anomalyScore;
+		m_AnomalyScore = anomalyScore;
 	}
 
-
-	public double getUnusualScore() 
+	public double getMaxNormalizedProbability() 
 	{
-		return m_UnusualScore;
+		return m_MaxNormalizedProbability;
 	}	
 
-	public void setUnusualScore(double unusualScore) 
+	public void setMaxNormalizedProbability(double maxNormalizedProbability) 
 	{
-		this.m_UnusualScore = unusualScore;
+		m_MaxNormalizedProbability = maxNormalizedProbability;
 	}
-	
-	
+
+
 	public int getRecordCount() 
 	{
 		return m_RecordCount;
@@ -144,9 +145,10 @@ public class Bucket
 			
 	public void setRecordCount(int recordCount) 
 	{
-		this.m_RecordCount = recordCount;
+		m_RecordCount = recordCount;
 	}
-	
+
+
 	/**
 	 * Get the list of detectors that produced output in this bucket
 	 * 
@@ -161,8 +163,18 @@ public class Bucket
 	{
 		m_Detectors = detectors;
 	}
-	
-	
+
+
+	/**
+	 * Add a detector that produced output in this bucket
+	 * 
+	 */	
+	public void addDetector(Detector detector)
+	{
+		m_Detectors.add(detector);
+	}
+
+
 	/**
 	 * Get all the anomaly records associated with this bucket
 	 * @return All the anomaly records
@@ -192,6 +204,7 @@ public class Bucket
 		m_EventCount = value;
 	}
 	
+
 	@Override
 	public int hashCode() 
 	{
@@ -202,7 +215,7 @@ public class Bucket
 		result = prime * result + (int) (temp ^ (temp >>> 32));
 		temp = Double.doubleToLongBits(m_AnomalyScore);
 		result = prime * result + (int) (temp ^ (temp >>> 32));
-		temp = Double.doubleToLongBits(m_UnusualScore);
+		temp = Double.doubleToLongBits(m_MaxNormalizedProbability);
 		result = prime * result + (int) (temp ^ (temp >>> 32));
 		result = prime * result
 				+ ((m_Detectors == null) ? 0 : m_Detectors.hashCode());
@@ -235,13 +248,13 @@ public class Bucket
 		}
 		
 		Bucket that = (Bucket)other;
-		
+
 		boolean equals = (this.m_Id.equals(that.m_Id)) &&
 				(this.m_Timestamp.equals(that.m_Timestamp)) &&
 				(this.m_EventCount == that.m_EventCount) &&
 				(this.m_RawAnomalyScore == that.m_RawAnomalyScore) &&
 				(this.m_AnomalyScore == that.m_AnomalyScore) &&
-				(this.m_UnusualScore == that.m_UnusualScore) &&
+				(this.m_MaxNormalizedProbability == that.m_MaxNormalizedProbability) &&
 				(this.m_RecordCount == that.m_RecordCount) &&
 				(this.m_Epoch == that.m_Epoch);
 		
@@ -253,10 +266,13 @@ public class Bucket
 		else if (this.m_Records != null && that.m_Records != null)
 		{
 			equals &= this.m_Records.size() == that.m_Records.size();
-			for (int i=0; i<this.m_Records.size(); i++)
+			if (equals)
 			{
-				equals &= this.m_Records.get(i).equals(that.m_Records.get(i));
-			}			
+				for (int i=0; i<this.m_Records.size(); i++)
+				{
+					equals &= this.m_Records.get(i).equals(that.m_Records.get(i));
+				}
+			}
 		}
 		else
 		{

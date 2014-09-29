@@ -23,6 +23,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
+
 
 /**
  * Autodetect analysis configuration options describes which fields are 
@@ -179,13 +181,93 @@ public class AnalysisConfig
 	 */
 	public List<String> analysisFields()
 	{
+		Set<String> fields = new TreeSet<>();
+		
+		for (Detector d : getDetectors())
+		{
+			if (d.getFieldName() != null)
+			{
+				fields.add(d.getFieldName());
+			}
+			if (d.getByFieldName() != null)
+			{
+				fields.add(d.getByFieldName() );
+			}
+			if (d.getOverFieldName() != null)
+			{
+				fields.add(d.getOverFieldName());
+			}
+			if (d.getPartitionFieldName() != null)
+			{
+				fields.add(d.getPartitionFieldName());
+			}
+		}
+		
+		// remove the null and empty strings
+		fields.remove("");
+		
+		return new ArrayList<String>(fields);
+	}
+	
+	
+	
+	public List<String> fields()
+	{
 		Set<String> fields = new HashSet<>();
 		
 		for (Detector d : getDetectors())
 		{
 			fields.add(d.getFieldName());
-			fields.add(d.getByFieldName() );
+		}
+		
+		// remove the null and empty strings
+		fields.remove("");
+		fields.remove(null);
+		
+		return new ArrayList<String>(fields);
+	}
+	
+	
+	
+	public List<String> byFields()
+	{
+		Set<String> fields = new HashSet<>();
+		
+		for (Detector d : getDetectors())
+		{
+			fields.add(d.getByFieldName());
+		}
+		
+		// remove the null and empty strings
+		fields.remove("");
+		fields.remove(null);
+		
+		return new ArrayList<String>(fields);
+	}
+	
+	public List<String> overFields()
+	{
+		Set<String> fields = new HashSet<>();
+		
+		for (Detector d : getDetectors())
+		{
 			fields.add(d.getOverFieldName());
+		}
+		
+		// remove the null and empty strings
+		fields.remove("");
+		fields.remove(null);
+		
+		return new ArrayList<String>(fields);
+	}
+	
+	
+	public List<String> partitionFields()
+	{
+		Set<String> fields = new HashSet<>();
+		
+		for (Detector d : getDetectors())
+		{
 			fields.add(d.getPartitionFieldName());
 		}
 		
@@ -239,4 +321,5 @@ public class AnalysisConfig
 		
 		return equal;
 	}
+	
 }

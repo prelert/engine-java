@@ -15,7 +15,6 @@
  * limitations under the License.                                           *
  *                                                                          *
  ***************************************************************************/
-
 package com.prelert.job;
 
 import java.net.URI;
@@ -37,7 +36,6 @@ public class JobDetails
 
 	static final public long DEFAULT_TIMEOUT = 600;
 	static final public long DEFAULT_BUCKETSPAN = 300;
-	static final public boolean DEFAULT_PERSIST_MODEL = true;
 	
 	/*
 	 * Field names used in serialisation
@@ -49,9 +47,12 @@ public class JobDetails
 	static final public String LAST_DATA_TIME = "lastDataTime";
 	
 	static final public String COUNTS = "counts";
+	static final public String BUCKET_COUNT = "bucketCount";
 	static final public String PROCESSED_RECORD_COUNT = "processedRecordCount";
-	static final public String PROCESSED_DATAPOINT_COUNT = "processedDataPointCount";
-	static final public String PROCESSED_BYTES = "processedBytes";
+	static final public String PROCESSED_FIELD_COUNT = "processedFieldCount";
+	static final public String INPUT_BYTES = "inputBytes";
+	static final public String INPUT_RECORD_COUNT = "inputRecordCount";
+	static final public String INPUT_FIELD_COUNT = "inputFieldCount";
 	static final public String INVALID_DATE_COUNT = "invalidDateCount";
 	static final public String MISSING_FIELD_COUNT = "missingFieldCount";
 	static final public String OUT_OF_ORDER_TIME_COUNT = "outOfOrderTimeStampCount";
@@ -83,10 +84,12 @@ public class JobDetails
 	/* These URIs are transient they don't need to be persisted */
 	private URI m_Location;
 	private URI m_DataEndpoint;
-	private URI m_ResultsEndpoint;
+	private URI m_BucketsEndpoint;
+	private URI m_RecordsEndpoint;
 	private URI m_LogsEndpoint;
-	
+
 	private Counts m_Counts;
+	
 		
 	/**
 	 * Default constructor required for serialisation
@@ -128,6 +131,7 @@ public class JobDetails
 	 * @param details
 	 * @param jobConfig
 	 */
+	
 	public JobDetails(String jobId, JobDetails details, JobConfiguration jobConfig)
 	{
 		this();
@@ -169,8 +173,8 @@ public class JobDetails
 			m_Description = jobConfig.getDescription();
 		}	
 	}
-
-
+	
+	
 	/**
 	 * Return the Job Id
 	 * @return The job Id string
@@ -268,6 +272,7 @@ public class JobDetails
 		m_LastDataTime = lastTime;
 	}
 
+
 	/**
 	 * The job timeout setting in seconds. Jobs are retired if they do not 
 	 * receive data for this period of time.
@@ -284,7 +289,7 @@ public class JobDetails
 		m_Timeout = timeout;
 	}
 
-	
+
 	/**
 	 * The analysis configuration object
 	 * @return The AnalysisConfig
@@ -363,23 +368,42 @@ public class JobDetails
 	{
 		m_DataEndpoint = value;
 	}
+	
+	/**
+	 * This Job's buckets endpoint as the full URL path
+	 * 
+	 * @return The Job's buckets URI
+	 */
+	public URI getBucketsEndpoint() 
+	{
+		return m_BucketsEndpoint;
+	}	
+	
+	/**
+	 * Set this Job's buckets endpoint
+	 */
+	public void setBucketsEndpoint(URI results) 
+	{
+		m_BucketsEndpoint = results;
+	}	
+		
 
 	/**
 	 * This Job's results endpoint as the full URL path
 	 * 
 	 * @return The Job's results URI
 	 */
-	public URI getResultsEndpoint() 
+	public URI getRecordsEndpoint() 
 	{
-		return m_ResultsEndpoint;
+		return m_RecordsEndpoint;
 	}	
 	
 	/**
-	 * Set this Job's results endpoint
+	 * Set this Job's records endpoint
 	 */
-	public void setResultsEndpoint(URI results) 
+	public void setRecordsEndpoint(URI results) 
 	{
-		m_ResultsEndpoint = results;
+		m_RecordsEndpoint = results;
 	}	
 	
 
@@ -399,8 +423,7 @@ public class JobDetails
 	public void setLogsEndpoint(URI value) 
 	{
 		m_LogsEndpoint = value;
-	}
-	
+	}	
 	
 	/**
 	 * Processed records count
@@ -419,8 +442,7 @@ public class JobDetails
 	{
 		m_Counts = counts;
 	}
-	
-	
+		
 	/**
 	 * Prints the more salient fields in a JSON-like format suitable for logging.
 	 * If every field was written it woul spam the log file.
@@ -493,7 +515,8 @@ public class JobDetails
 				bothNullOrEqual(this.m_DataDescription, that.m_DataDescription) &&
 				bothNullOrEqual(this.m_Location, that.m_Location) &&
 				bothNullOrEqual(this.m_DataEndpoint, that.m_DataEndpoint) &&
-				bothNullOrEqual(this.m_ResultsEndpoint, that.m_ResultsEndpoint);				
+				bothNullOrEqual(this.m_BucketsEndpoint, that.m_BucketsEndpoint) &&				
+				bothNullOrEqual(this.m_RecordsEndpoint, that.m_RecordsEndpoint);				
 	}
 	
 	
@@ -502,12 +525,30 @@ public class JobDetails
 	 */
 	public class Counts
 	{
+		private long m_BucketCount;
 		private long m_ProcessedRecordCount;
-		private long m_ProcessedDataPointCount;
-		private long m_ProcessedBytes;
+		private long m_ProcessedFieldCount;
+		private long m_InputRecordCount;
+		private long m_InputBytes;
+		private long m_InputFieldCount;
 		private long m_InvalidDateCount;
 		private long m_MissingFieldCount;
 		private long m_OutOfOrderTimeStampCount;
+		
+		
+		/**
+		 * The number of bucket results
+		 * @return
+		 */
+		public long getBucketCount()
+		{
+			return m_BucketCount;			
+		}
+		
+		public void setBucketCount(long count)
+		{
+			m_BucketCount = count;
+		}
 		
 		/**
 		 * Number of records processed by this job.
@@ -532,15 +573,29 @@ public class JobDetails
 		 * not include the time field.
 		 * @return 
 		 */
-		public long getProcessedDataPointCount() 
+		public long getProcessedFieldCount() 
 		{
-			return m_ProcessedDataPointCount;
+			return m_ProcessedFieldCount;
 		}
 		
-		public void setProcessedDataPointCount(long count) 
+		public void setProcessedFieldCount(long count) 
 		{
-			m_ProcessedDataPointCount = count;
+			m_ProcessedFieldCount = count;
 		}		
+		
+		/**
+		 * Total number of input records
+		 * @return
+		 */
+		public long getInputRecordCount()
+		{
+			return m_InputRecordCount;
+		}
+		
+		public void setInputRecordCount(long count)
+		{
+			m_InputRecordCount = count;
+		}
 		
 		/**
 		 * The total number of bytes sent to this job.
@@ -549,14 +604,29 @@ public class JobDetails
 		 * e.g. because the date cannot be read
 		 * @return Volume in bytes
 		 */
-		public long getProcessedBytes()
+		public long getInputBytes()
 		{
-			return m_ProcessedBytes;
+			return m_InputBytes;
 		}
 		
-		public void setProcessedBytes(long volume)
+		public void setInputBytes(long volume)
 		{
-			m_ProcessedBytes = volume;
+			m_InputBytes = volume;
+		}
+		
+		/**
+		 * The total number of fields sent to the job
+		 * including fields that aren't analysed.
+		 * @return
+		 */
+		public long getInputFieldCount()
+		{
+			return m_InputFieldCount;
+		}
+		
+		public void setInputFieldCount(long volume)
+		{
+			m_InputFieldCount = volume;
 		}
 		
 		
@@ -623,8 +693,12 @@ public class JobDetails
 			
 			Counts that = (Counts)other;
 
-			return this.m_ProcessedRecordCount == that.m_ProcessedRecordCount &&
-					this.m_ProcessedBytes == that.m_ProcessedBytes &&
+			return this.m_BucketCount == that.m_BucketCount &&
+					this.m_ProcessedRecordCount == that.m_ProcessedRecordCount &&
+					this.m_ProcessedFieldCount == that.m_ProcessedFieldCount &&
+					this.m_InputBytes == that.m_InputBytes &&
+					this.m_InputFieldCount == that.m_InputFieldCount &&
+					this.m_InputRecordCount == that.m_InputRecordCount &&
 					this.m_InvalidDateCount == that.m_InvalidDateCount &&
 					this.m_MissingFieldCount == that.m_MissingFieldCount &&
 					this.m_OutOfOrderTimeStampCount == that.m_OutOfOrderTimeStampCount;

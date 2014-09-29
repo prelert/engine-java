@@ -15,7 +15,6 @@
  * limitations under the License.                                           *
  *                                                                          *
  ***************************************************************************/
-
 package com.prelert.job;
 
 import java.util.Arrays;
@@ -89,7 +88,6 @@ public class Detector
 				NON_ZERO_COUNT, NZC
 			}));
 	
-
 	/**
 	 * The set of functions that require a fieldname
 	 */
@@ -122,6 +120,14 @@ public class Detector
 			}));
 	
 	
+	/**
+	 * field names cannot contain any of these characters
+	 * 	[, ], (, ), =, ", \, - 
+	 */
+	static public String PROHIBITED = "[, ], (, ), =, \", \\, -";
+	static final public Character [] PROHIBITED_FIELDNAME_CHARACTERS = 
+		{'[', ']', '(', ')', '=', '"', '\\', '-'};	
+			
 	
 	private String m_Function;
 	private String m_FieldName;
@@ -305,4 +311,5 @@ public class Detector
 				JobDetails.bothNullOrEqual(this.m_PartitionFieldName, that.m_PartitionFieldName) &&
 				JobDetails.bothNullOrEqual(this.m_UseNull, that.m_UseNull);					
 	}
+	
 }
