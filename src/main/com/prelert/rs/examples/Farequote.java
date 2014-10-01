@@ -16,7 +16,7 @@
  *                                                                          *
  ***************************************************************************/
 
-package com.prelert.rs.examples.farequote;
+package com.prelert.rs.examples;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -53,17 +53,25 @@ import com.prelert.rs.data.SingleDocument;
 /**
  * Example of using the Prelert Engine API Java client.
  * 
- * This example works with the farequote.csv file that can be
- * downloaded from http://s3.amazonaws.com/prelert_demo/farequote.csv
- * the first 5 lines of which should resemble:
- * 
- * time,airline,responsetime,sourcetype
- * 2014-06-23 00:00:00Z,AAL,132.2046,farequote
- * 2014-06-23 00:00:00Z,JZA,990.4628,farequote
- * 2014-06-23 00:00:00Z,JBU,877.5927,farequote
- * 
+ * This class shows how to configure and create a new job,
+ * upload data for analysis and inspect the results. See
+ * <a href=https://github.com/prelert/engine-java/blob/master/README.md>
+ * https://github.com/prelert/engine-java/blob/master/README.md</a> 
+ * for more details.
+ * <p/>
+ * The data used in this example can be downloaded from 
+ * <a href=http://s3.amazonaws.com/prelert_demo/farequote.csv>
+ * http://s3.amazonaws.com/prelert_demo/farequote.csv</a>
+ * the first 5 lines of which should resemble:<p/>
+ * <code>
+ * time,airline,responsetime,sourcetype<br/>
+ * 2014-06-23 00:00:00Z,AAL,132.2046,farequote<br/>
+ * 2014-06-23 00:00:00Z,JZA,990.4628,farequote<br/>
+ * 2014-06-23 00:00:00Z,JBU,877.5927,farequote<br/>
+ * </code>
+ * <p/>
  * The <code>main</code> method takes 2 arguments - the path to farequote.csv
- * and optionally the Url of the REST API. If the Url is not passed 
+ * and optionally the URL of the REST API. If the URL is not passed 
  * {@value #API_BASE_URL} is used.
  */
 public class Farequote
