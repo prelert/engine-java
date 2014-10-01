@@ -33,8 +33,15 @@ Farequote Example
 ------------------
 As an illustration of the Java client we present a walk-through of creating a new job
 uploading data to the job then finding the most anomalous records in the data. The 
-example code is in [Farequote.java](src/main/com/prelert/rs/examples/farequote/Farequote.java)
-and the data can be downloaded from [http://s3.amazonaws.com/prelert_demo/farequote.csv](http://s3.amazonaws.com/prelert_demo/farequote.csv)
+example code is in [Farequote.java](src/main/com/prelert/rs/examples/Farequote.java)
+and the data used in the analysis can be downloaded from 
+[http://s3.amazonaws.com/prelert_demo/farequote.csv](http://s3.amazonaws.com/prelert_demo/farequote.csv)
+
+Running the Example
+~~~~~~~~~~~~~~~~~~~
+Run the example from Maven using this command:
+
+    mvn exec:java -Dexec.mainClass="com.prelert.rs.examples.Farequote" -Dexec.args="/path/to/farequote.csv http://localhost:8080/engine/v1"
 
 The first step is to set the job configuration
 
