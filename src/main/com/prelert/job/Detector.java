@@ -15,11 +15,13 @@
  * limitations under the License.                                           *
  *                                                                          *
  ***************************************************************************/
+
 package com.prelert.job;
 
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -27,123 +29,157 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 
 /**
- * Defines the fields to be used in the analysis. 
- * <code>fieldname</code> must be set and only one of <code>byFieldName</code> 
+ * Defines the fields to be used in the analysis.
+ * <code>fieldname</code> must be set and only one of <code>byFieldName</code>
  * and <code>overFieldName</code> should be set.
  */
 @JsonInclude(Include.NON_NULL)
 public class Detector
 {
-	static final public String FUNCTION = "function";
-	static final public String FIELD_NAME = "fieldName";
-	static final public String BY_FIELD_NAME = "byFieldName";
-	static final public String OVER_FIELD_NAME = "overFieldName";
-	static final public String PARTITION_FIELD_NAME = "partitionFieldName";
-	static final public String USE_NULL = "useNull";
-	
-	
-	static final public String COUNT = "count";
-	static final public String HIGH_COUNT = "high_count";
-	static final public String LOW_COUNT = "low_count";
-	static final public String NON_ZERO_COUNT = "non_zero_count";
-	static final public String NZC = "nzc";
-	static final public String DISTINCT_COUNT = "distinct_count";
-	static final public String DC = "dc";
-	static final public String RARE = "rare";
-	static final public String FREQ_RARE = "freq_rare";
-	static final public String METRIC = "metric";
-	static final public String MEAN = "mean";
-	static final public String AVG = "avg";
-	static final public String MIN = "min";
-	static final public String MAX = "max";
-	static final public String SUM = "sum";
-	
+	public static final String FUNCTION = "function";
+	public static final String FIELD_NAME = "fieldName";
+	public static final String BY_FIELD_NAME = "byFieldName";
+	public static final String OVER_FIELD_NAME = "overFieldName";
+	public static final String PARTITION_FIELD_NAME = "partitionFieldName";
+	public static final String USE_NULL = "useNull";
+    public static final String EXCLUDE_FREQUENT = "excludeFrequent";
+
+
+	public static final String COUNT = "count";
+	public static final String HIGH_COUNT = "high_count";
+	public static final String LOW_COUNT = "low_count";
+	public static final String NON_ZERO_COUNT = "non_zero_count";
+	public static final String LOW_NON_ZERO_COUNT = "low_non_zero_count";
+	public static final String HIGH_NON_ZERO_COUNT = "high_non_zero_count";
+	public static final String NZC = "nzc";
+	public static final String LOW_NZC = "low_nzc";
+	public static final String HIGH_NZC = "high_nzc";
+	public static final String DISTINCT_COUNT = "distinct_count";
+	public static final String DC = "dc";
+	public static final String RARE = "rare";
+	public static final String FREQ_RARE = "freq_rare";
+	public static final String METRIC = "metric";
+	public static final String MEAN = "mean";
+	public static final String HIGH_MEAN = "high_mean";
+	public static final String LOW_MEAN = "low_mean";
+	public static final String AVG = "avg";
+	public static final String HIGH_AVG = "high_avg";
+	public static final String LOW_AVG = "low_avg";
+	public static final String MIN = "min";
+	public static final String MAX = "max";
+	public static final String SUM = "sum";
+	public static final String LOW_SUM = "low_sum";
+	public static final String HIGH_SUM = "high_sum";
+
 	/**
 	 * The set of valid function names.
 	 */
-	static public final Set<String> ANALYSIS_FUNCTIONS = 
+	public static final Set<String> ANALYSIS_FUNCTIONS =
 			new HashSet<String>(Arrays.<String>asList(new String [] {
-				COUNT, 
-				HIGH_COUNT, 
+				COUNT,
+				HIGH_COUNT,
 				LOW_COUNT,
 				NON_ZERO_COUNT, NZC,
+				LOW_NON_ZERO_COUNT, LOW_NZC,
+				HIGH_NON_ZERO_COUNT, HIGH_NZC,
 				DISTINCT_COUNT, DC,
 				RARE,
 				FREQ_RARE,
 				METRIC,
 				MEAN, AVG,
-				MIN, 
+				HIGH_MEAN, HIGH_AVG,
+				LOW_MEAN, LOW_AVG,
+				MIN,
 				MAX,
-				SUM
+				SUM,
+				LOW_SUM,
+				HIGH_SUM
 			}));
-	
+
 	/**
 	 * The set of functions that do not require a field, by field or over field
 	 */
-	static public final Set<String> COUNT_WITHOUT_FIELD_FUNCTIONS = 
+	public static final Set<String> COUNT_WITHOUT_FIELD_FUNCTIONS =
 			new HashSet<String>(Arrays.<String>asList(new String [] {
 				COUNT,
-				HIGH_COUNT, 
+				HIGH_COUNT,
 				LOW_COUNT,
-				NON_ZERO_COUNT, NZC
+				NON_ZERO_COUNT, NZC,
+				LOW_NON_ZERO_COUNT, LOW_NZC,
+                HIGH_NON_ZERO_COUNT, HIGH_NZC
 			}));
-	
+
 	/**
 	 * The set of functions that require a fieldname
 	 */
-	static public final Set<String> FIELD_NAME_FUNCTIONS = 
+	public static final Set<String> FIELD_NAME_FUNCTIONS =
 			new HashSet<String>(Arrays.<String>asList(new String [] {
 				DISTINCT_COUNT, DC,
 				METRIC,
 				MEAN, AVG,
-				MIN, 
+				HIGH_MEAN, HIGH_AVG,
+				LOW_MEAN, LOW_AVG,
+				MIN,
 				MAX,
-				SUM
+				SUM,
+				LOW_SUM,
+				HIGH_SUM
 			}));
-	
+
 	/**
 	 * The set of functions that require a by fieldname
 	 */
-	static public final Set<String> BY_FIELD_NAME_FUNCTIONS = 
+	public static final Set<String> BY_FIELD_NAME_FUNCTIONS =
 			new HashSet<String>(Arrays.<String>asList(new String [] {
 				RARE,
 				FREQ_RARE
 			}));
-	
+
 	/**
 	 * The set of functions that require a over fieldname
 	 */
-	static public final Set<String> OVER_FIELD_NAME_FUNCTIONS = 
+	public static final Set<String> OVER_FIELD_NAME_FUNCTIONS =
 			new HashSet<String>(Arrays.<String>asList(new String [] {
 				DISTINCT_COUNT, DC,
 				FREQ_RARE
 			}));
-	
-	
+
+	/**
+     * The set of functions that cannot have an over fieldname
+     */
+	public static final Set<String> NO_OVER_FIELD_NAME_FUNCTIONS =
+	        new HashSet<String>(Arrays.<String>asList(new String [] {
+                NON_ZERO_COUNT, NZC,
+                LOW_NON_ZERO_COUNT, LOW_NZC,
+                HIGH_NON_ZERO_COUNT, HIGH_NZC
+            }));
+
+
 	/**
 	 * field names cannot contain any of these characters
-	 * 	[, ], (, ), =, ", \, - 
+	 * 	[, ], (, ), =, ", \, -
 	 */
-	static public String PROHIBITED = "[, ], (, ), =, \", \\, -";
-	static final public Character [] PROHIBITED_FIELDNAME_CHARACTERS = 
-		{'[', ']', '(', ')', '=', '"', '\\', '-'};	
-			
-	
+	public static final String PROHIBITED = "[, ], (, ), =, \", \\, -";
+	public static final Character [] PROHIBITED_FIELDNAME_CHARACTERS =
+		{'[', ']', '(', ')', '=', '"', '\\', '-'};
+
+
 	private String m_Function;
 	private String m_FieldName;
 	private String m_ByFieldName;
-	private String m_OverFieldName;		
+	private String m_OverFieldName;
 	private String m_PartitionFieldName;
-	private Boolean m_UseNull;		
-		
+	private Boolean m_UseNull;
+    private String m_ExcludeFrequent;
+
 	public Detector()
 	{
-		
+
 	}
-	
+
 	/**
 	 * Populate the detector from the String -> object map.
-	 * 
+	 *
 	 * @param detectorMap
 	 */
 	public Detector(Map<String, Object> detectorMap)
@@ -179,7 +215,7 @@ public class Detector
 			{
 				this.setOverFieldName(field.toString());
 			}
-		}				
+		}
 		if (detectorMap.containsKey(PARTITION_FIELD_NAME))
 		{
 			Object obj = detectorMap.get(PARTITION_FIELD_NAME);
@@ -195,121 +231,154 @@ public class Detector
 			{
 				this.setUseNull((Boolean)field);
 			}
-		}						
+		}
+        if (detectorMap.containsKey(EXCLUDE_FREQUENT))
+        {
+            Object field = detectorMap.get(EXCLUDE_FREQUENT);
+            if (field != null)
+            {
+                setExcludeFrequent(field.toString());
+            }
+        }
 	}
-	
-	
-	
+
+
+
 	/**
-	 * The analysis function used e.g. count, rare, min etc. There is no 
-	 * validation to check this value is one a predefined set 
+	 * The analysis function used e.g. count, rare, min etc. There is no
+	 * validation to check this value is one a predefined set
 	 * @return The function or <code>null</code> if not set
 	 */
-	public String getFunction() 
+	public String getFunction()
 	{
 		return m_Function;
 	}
-	
-	public void setFunction(String m_Function) 
+
+	public void setFunction(String function)
 	{
-		this.m_Function = m_Function;
+		this.m_Function = function;
 	}
-	
+
 	/**
 	 * The Analysis field
 	 * @return The field to analyse
 	 */
-	public String getFieldName() 
+	public String getFieldName()
 	{
 		return m_FieldName;
 	}
-	
-	public void setFieldName(String m_FieldName) 
+
+	public void setFieldName(String fieldName)
 	{
-		this.m_FieldName = m_FieldName;
+		this.m_FieldName =fieldName;
 	}
-	
+
 	/**
-	 * The 'by' field or <code>null</code> if not set. 
+	 * The 'by' field or <code>null</code> if not set.
 	 * @return The 'by' field
 	 */
-	public String getByFieldName() 
+	public String getByFieldName()
 	{
 		return m_ByFieldName;
 	}
-	
-	public void setByFieldName(String m_ByFieldName) 
+
+	public void setByFieldName(String byFieldName)
 	{
-		this.m_ByFieldName = m_ByFieldName;
+		this.m_ByFieldName = byFieldName;
 	}
-	
+
 	/**
-	 * The 'over' field or <code>null</code> if not set. 
+	 * The 'over' field or <code>null</code> if not set.
 	 * @return The 'over' field
 	 */
-	public String getOverFieldName() 
+	public String getOverFieldName()
 	{
 		return m_OverFieldName;
 	}
-	
-	public void setOverFieldName(String m_OverFieldName) 
+
+	public void setOverFieldName(String overFieldName)
 	{
-		this.m_OverFieldName = m_OverFieldName;
-	}	
-	
+		this.m_OverFieldName = overFieldName;
+	}
+
 	/**
-	 * Segments the analysis along another field to have completely 
+	 * Segments the analysis along another field to have completely
 	 * independent baselines for each instance of partitionfield
 	 *
 	 * @return The Partition Field
 	 */
-	public String getPartitionFieldName() 
+	public String getPartitionFieldName()
 	{
 		return m_PartitionFieldName;
 	}
-	
-	public void setPartitionFieldName(String partitionFieldName) 
+
+	public void setPartitionFieldName(String partitionFieldName)
 	{
 		this.m_PartitionFieldName = partitionFieldName;
 	}
-	
-	
+
+
 	/**
 	 * Where there isn't a value for the 'by' or 'over' field should a new
-	 * series be used as the 'null' series. 
+	 * series be used as the 'null' series.
 	 * @return true if the 'null' series should be created
 	 */
-	public Boolean isUseNull() 
+	public Boolean isUseNull()
 	{
 		return m_UseNull;
 	}
-	
-	public void setUseNull(Boolean useNull) 
+
+	public void setUseNull(Boolean useNull)
 	{
 		this.m_UseNull = useNull;
 	}
-			
-	@Override 
+
+    /**
+     * Excludes frequently-occuring metrics from the analysis;
+     * can apply to 'by' field, 'over' field, or both
+     * It will be validated by the C++ process
+     *
+     * @return the value that the user set
+     */
+    public String getExcludeFrequent()
+    {
+        return m_ExcludeFrequent;
+    }
+
+    public void setExcludeFrequent(String v)
+    {
+        m_ExcludeFrequent = v;
+    }
+
+
+	@Override
 	public boolean equals(Object other)
 	{
 		if (this == other)
 		{
 			return true;
 		}
-		
+
 		if (other instanceof Detector == false)
 		{
 			return false;
 		}
-		
+
 		Detector that = (Detector)other;
-				
+
 		return JobDetails.bothNullOrEqual(this.m_Function, that.m_Function) &&
 				JobDetails.bothNullOrEqual(this.m_FieldName, that.m_FieldName) &&
 				JobDetails.bothNullOrEqual(this.m_ByFieldName, that.m_ByFieldName) &&
 				JobDetails.bothNullOrEqual(this.m_OverFieldName, that.m_OverFieldName) &&
 				JobDetails.bothNullOrEqual(this.m_PartitionFieldName, that.m_PartitionFieldName) &&
-				JobDetails.bothNullOrEqual(this.m_UseNull, that.m_UseNull);					
+				JobDetails.bothNullOrEqual(this.m_UseNull, that.m_UseNull) &&
+                JobDetails.bothNullOrEqual(this.m_ExcludeFrequent, that.m_ExcludeFrequent);
 	}
-	
+
+    @Override
+    public int hashCode()
+    {
+        return Objects.hash(m_Function, m_FieldName, m_ByFieldName,
+                m_OverFieldName, m_PartitionFieldName, m_UseNull);
+    }
 }

@@ -20,22 +20,21 @@ package com.prelert.rs.data;
 import com.fasterxml.jackson.core.io.JsonStringEncoder;
 
 
-
 /**
  * Encapsulates the an API error condition.
- * The errorCode identifies the error type and the message 
- * provides further details. If the error was caused by 
+ * The errorCode identifies the error type and the message
+ * provides further details. If the error was caused by
  * a Java Exception {@linkplain #getCause()} will return that
- * Exception else it returns <code>null</code>. 
- * 
+ * Exception else it returns <code>null</code>.
+ *
  * @see ErrorCode
  */
-public class ApiError 
+public class ApiError
 {
 	private ErrorCode m_ErrorCode;
 	private String m_Message;
 	private Throwable m_Cause;
-	
+
 	/**
 	 * Default cons for serialisation (Jackson)
 	 */
@@ -46,15 +45,15 @@ public class ApiError
 
 	/**
 	 * Create a new ApiError from one of the list of error codes.
-	 * 
+	 *
 	 * @param errorCode
-	 * @see ErrorCode 
+	 * @see ErrorCode
 	 */
 	public ApiError(ErrorCode errorCode)
 	{
-		m_ErrorCode = errorCode;		
+		m_ErrorCode = errorCode;
 	}
-	
+
 	/**
 	 * The error code
 	 * @see ErrorCode
@@ -64,7 +63,7 @@ public class ApiError
 	{
 		return m_ErrorCode;
 	}
-	
+
 	/**
 	 * Set the error code.
 	 * @see ErrorCode
@@ -74,7 +73,7 @@ public class ApiError
 	{
 		m_ErrorCode = value;
 	}
-	
+
 	/**
 	 * The error message
 	 * @return The error string
@@ -83,7 +82,7 @@ public class ApiError
 	{
 		return m_Message;
 	}
-	
+
 	/**
 	 * Set the error message
 	 * @param message
@@ -92,16 +91,16 @@ public class ApiError
 	{
 		m_Message = message;
 	}
-	
+
 	/**
 	 * The exception that caused the error
-	 * @return The exception that caused the error or <code>null</code> 
+	 * @return The exception that caused the error or <code>null</code>
 	 */
 	public Throwable getCause()
 	{
 		return m_Cause;
 	}
-	
+
 	/**
 	 * Set the cause to the error
 	 * @param e
@@ -110,7 +109,7 @@ public class ApiError
 	{
 		m_Cause = e;
 	}
-	
+
 	/**
 	 * JSON representation of this object.
 	 * If cause is null then it is not written and
@@ -123,7 +122,7 @@ public class ApiError
 
 		StringBuilder builder = new StringBuilder();
 		builder.append('{');
-				
+
 		boolean needComma = true;
 		if (m_Message != null)
 		{
@@ -131,13 +130,13 @@ public class ApiError
 			builder.append("\n  \"message\" : \"").append(message).append('"').append(',');
 			needComma = false;
 		}
-		
+
 		if (m_ErrorCode != null)
 		{
 			builder.append("\n  \"errorCode\" : ").append(m_ErrorCode.getValueString());
 			needComma = true;
 		}
-		
+
 		if (m_Cause != null)
 		{
 			if (needComma)
@@ -147,9 +146,9 @@ public class ApiError
 			char [] cause = encoder.quoteAsString(m_Cause.toString());
 			builder.append("\n  \"cause\" : \"").append(cause).append('"');
 		}
-		
+
 		builder.append("\n}\n");
-		
+
 		return builder.toString();
 	}
 }

@@ -34,62 +34,62 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
  */
 @JsonInclude(Include.NON_NULL)
 @JsonIgnoreProperties({"records"})
-public class Detector 
+public class Detector
 {
-	static final public String TYPE = "detector";
-	static final public String NAME = "name";
-	static final public String RECORDS = "records";
-	
-	static final private Logger s_Logger = Logger.getLogger(Detector.class);
-	
-	private String m_Name;
-	private List<AnomalyRecord> m_Records;
-	
-	public Detector()
-	{
-		m_Records = new ArrayList<>();
-	}
-	
-	public Detector(String name)
-	{
-		this();
-		m_Name = name;		
-	}
-	
-	/**
-	 * Create the detector from a map. Only the name field is read
-	 * @param values
-	 */
-	public Detector(Map<String, Object> values)
-	{
-		if (values.containsKey(NAME))
-		{
-			m_Name = values.get(NAME).toString();
-		}
-		else
-		{
-			s_Logger.error("Constructing detector from map with no " + NAME + " field");
-		}
-	}
-	
-	public String getName()
-	{
-		return m_Name;
-	}
-	
-	public void setName(String name)
-	{
-		m_Name = name;
-	}
-	
-	public void addRecord(AnomalyRecord record)
-	{
-		m_Records.add(record);
-	}
-	
-	public List<AnomalyRecord> getRecords()
-	{
-		return m_Records;
-	}
-	
+    public static final String TYPE = "detector";
+    public static final String NAME = "name";
+    public static final String RECORDS = "records";
+
+    private static final Logger LOGGER = Logger.getLogger(Detector.class);
+
+    private String m_Name;
+    private List<AnomalyRecord> m_Records;
+
+
+    public Detector()
+    {
+        m_Records = new ArrayList<>();
+    }
+
+    public Detector(String name)
+    {
+        this();
+       setName(name);
+    }
+
+    /**
+     * Create the detector from a map. Only the name field is read
+     * @param values
+     */
+    public Detector(Map<String, Object> values)
+    {
+        if (values.containsKey(NAME))
+        {
+            m_Name = values.get(NAME).toString().intern();
+        }
+        else
+        {
+            LOGGER.error("Constructing detector from map with no " + NAME + " field");
+        }
+    }
+
+    public String getName()
+    {
+        return m_Name;
+    }
+
+    public void setName(String name)
+    {
+        m_Name = name.intern();
+    }
+
+    public void addRecord(AnomalyRecord record)
+    {
+        m_Records.add(record);
+    }
+
+    public List<AnomalyRecord> getRecords()
+    {
+        return m_Records;
+    }
 }

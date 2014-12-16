@@ -19,8 +19,8 @@
 package com.prelert.rs.data;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 /**
  * Generic wrapper class for returning a single document requested through
@@ -31,24 +31,24 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
  */
 @JsonPropertyOrder({"documentId", "exists", "type", "document"})
 @JsonInclude(Include.NON_NULL)
-public class SingleDocument<T> 
+public class SingleDocument<T>
 {
 	private boolean m_Exists;
 	private String m_Type;
 	private String m_Id;
-	
+
 	private T m_Document;
-	
+
 	/**
 	 * Return true if the requested document exists
 	 * @return true is document exists
 	 */
-	public boolean isExists() 
+	public boolean isExists()
 	{
 		return m_Exists;
 	}
 
-	public void setExists(boolean exists) 
+	public void setExists(boolean exists)
 	{
 		this.m_Exists = exists;
 	}
@@ -57,12 +57,12 @@ public class SingleDocument<T>
 	 * The type of the requested document
 	 * @return The document type
 	 */
-	public String getType() 
+	public String getType()
 	{
 		return m_Type;
 	}
 
-	public void setType(String type) 
+	public void setType(String type)
 	{
 		this.m_Type = type;
 	}
@@ -71,35 +71,35 @@ public class SingleDocument<T>
 	 * The id of the requested document
 	 * @return The document Id
 	 */
-	public String getDocumentId() 
+	public String getDocumentId()
 	{
 		return m_Id;
 	}
 
-	public void setDocumentId(String id) 
+	public void setDocumentId(String id)
 	{
 		this.m_Id = id;
 	}
-	
+
 	/**
-	 * Get the requested document or null 
+	 * Get the requested document or null
 	 * @return The document or <code>null</code>
 	 */
 	public T getDocument()
 	{
 		return m_Document;
 	}
-	
+
 	/**
 	 * Set the requested document.
-	 * If the doc is non-null {@link #isExists() Exists} is set to true 
+	 * If the doc is non-null {@link #isExists() Exists} is set to true
 	 * else it is false
 	 * @param doc
 	 */
 	public void setDocument(T doc)
-	{		
+	{
 		m_Document = doc;
 		m_Exists = (doc != null) ? true : false;
 	}
-	
+
 }

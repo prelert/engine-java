@@ -16,43 +16,41 @@
  *                                                                          *
  ***************************************************************************/
 
+
 package com.prelert.job;
 
 import java.util.Map;
+import java.util.Objects;
 
 /**
- * Analysis limits for autodetect (max field values, max time buckets). 
- * 
+ * Analysis limits for autodetect (max model memory size).
+ *
  * If an option has not been set it's value will be 0 in which case it
  * shouldn't be used so the default value is picked up instead.
  */
-public class AnalysisLimits 
+public class AnalysisLimits
 {
 	/**
 	 * Serialisation field names
 	 */
-	static final public String MAX_FIELD_VALUES = "maxFieldValues";
-	static final public String MAX_TIME_BUCKETS = "maxTimeBuckets";
-	
-	private long m_MaxFieldValues;
-	private long m_MaxTimeBuckets;
-	
+	public static final String MODEL_MEMORY_LIMIT = "modelMemoryLimit";
+
+	private long m_ModelMemoryLimit;
+
 	/**
 	 * Initialise values to 0.
-	 * If the values are 0 they haven't been set 
-	 */	
+	 * If the values are 0 they haven't been set
+	 */
 	public AnalysisLimits()
 	{
-		m_MaxFieldValues = 0;
-		m_MaxTimeBuckets = 0;
+		m_ModelMemoryLimit = 0;
 	}
-	
-	public AnalysisLimits(long maxFieldValues, long maxTimeBuckets)
+
+	public AnalysisLimits(long modelMemoryLimit)
 	{
-		m_MaxFieldValues = maxFieldValues;
-		m_MaxTimeBuckets = maxTimeBuckets;
+		m_ModelMemoryLimit = modelMemoryLimit;
 	}
-	
+
 	/**
 	 * Create and set field values from the Map.
 	 * @param values
@@ -60,78 +58,57 @@ public class AnalysisLimits
 	public AnalysisLimits(Map<String, Object> values)
 	{
 		this();
-		
-		if (values.containsKey(MAX_FIELD_VALUES))
+
+		if (values.containsKey(MODEL_MEMORY_LIMIT))
 		{
-			Object obj = values.get(MAX_FIELD_VALUES);
+			Object obj = values.get(MODEL_MEMORY_LIMIT);
 			if (obj != null)
 			{
-				m_MaxFieldValues = ((Number)obj).longValue();
+				m_ModelMemoryLimit = ((Number)obj).longValue();
 			}
-		}	
-		if (values.containsKey(MAX_TIME_BUCKETS))
-		{
-			Object obj = values.get(MAX_TIME_BUCKETS);
-			if (obj != null)
-			{
-				m_MaxTimeBuckets = ((Number)obj).longValue();
-			}
-		}		
-		
+		}
 	}
-		
+
 	/**
-	 * Maximum number of distinct values of a single field before analysis
-	 * of that field will be halted. If 0 then this is an invalid and the
-	 * native process's default will be used. 
-	 * @return The max distinct values in a single field
+	 * Maximum size of the model in MB before the anomaly detector
+     * will drop new samples to prevent the model using any more
+     * memory
 	 */
-	public long getMaxFieldValues()
+	public long getModelMemoryLimit()
 	{
-		return m_MaxFieldValues;
+		return m_ModelMemoryLimit;
 	}
-	
-	public void setMaxFieldValues(long value)
+
+	public void setModelMemoryLimit(long value)
 	{
-		m_MaxFieldValues = value;
+		m_ModelMemoryLimit = value;
 	}
-	
-	/**
-	 *  Maximum number of time buckets to process during anomaly detection 
-	 *  before ceasing to output results. If 0 then this is an invalid and the
-	 *  native process's default will be used. 
-	 *  
-	 * @return The max number of buckets to process in the job
-	 */
-	public long getMaxTimeBuckets()
-	{
-		return m_MaxTimeBuckets;
-	}
-	
-	public void setMaxTimeBuckets(long value)
-	{
-		m_MaxTimeBuckets = value;
-	}
-	
-	
+
 	/**
 	 * Overridden equality test
 	 */
+	@Override
 	public boolean equals(Object other)
 	{
 		if (this == other)
 		{
 			return true;
 		}
-		
+
 		if (other instanceof AnalysisLimits == false)
 		{
 			return false;
 		}
-		
+
 		AnalysisLimits that = (AnalysisLimits)other;
-		return (this.m_MaxFieldValues == that.m_MaxFieldValues) &&
-				(this.m_MaxTimeBuckets == that.m_MaxTimeBuckets);
+		return (this.m_ModelMemoryLimit == that.m_ModelMemoryLimit);
 	}
-	
+
+    @Override
+    public int hashCode()
+    {
+        return Objects.hash(m_ModelMemoryLimit);
+    }
+
 }
+
