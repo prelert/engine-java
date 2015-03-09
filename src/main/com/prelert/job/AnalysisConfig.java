@@ -21,7 +21,6 @@ package com.prelert.job;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
@@ -54,6 +53,7 @@ public class AnalysisConfig
 	 */
 	private Long m_BucketSpan;
 	private Long m_BatchSpan;
+    private Long m_Latency = 0L;
 	private Long m_Period;
 	private String m_SummaryCountFieldName;
 	private List<Detector> m_Detectors;
@@ -64,63 +64,6 @@ public class AnalysisConfig
 	public AnalysisConfig()
 	{
 		m_Detectors = new ArrayList<>();
-	}
-
-	/**
-	 * Construct an AnalysisConfig from a map. Detector objects are
-	 * nested elements in the map.
-	 * @param values
-	 */
-	@SuppressWarnings("unchecked")
-	public AnalysisConfig(Map<String, Object> values)
-	{
-		this();
-
-		if (values.containsKey(BUCKET_SPAN))
-		{
-			Object obj = values.get(BUCKET_SPAN);
-			if (obj != null)
-			{
-				m_BucketSpan = ((Integer)obj).longValue();
-			}
-		}
-		if (values.containsKey(BATCH_SPAN))
-		{
-			Object obj = values.get(BATCH_SPAN);
-			if (obj != null)
-			{
-				m_BatchSpan = ((Integer)obj).longValue();
-			}
-		}
-		if (values.containsKey(PERIOD))
-		{
-			Object obj = values.get(PERIOD);
-			if (obj != null)
-			{
-				m_Period = ((Integer)obj).longValue();
-			}
-		}
-		if (values.containsKey(SUMMARY_COUNT_FIELD_NAME))
-		{
-			Object obj = values.get(SUMMARY_COUNT_FIELD_NAME);
-			if (obj != null)
-			{
-				m_SummaryCountFieldName = (String)obj;
-			}
-		}
-		if (values.containsKey(DETECTORS))
-		{
-			Object obj = values.get(DETECTORS);
-			if (obj instanceof ArrayList)
-			{
-				for (Map<String, Object> detectorMap : (ArrayList<Map<String, Object>>)obj)
-				{
-					Detector detector = new Detector(detectorMap);
-					m_Detectors.add(detector);
-				}
-			}
-
-		}
 	}
 
 	/**
@@ -151,6 +94,24 @@ public class AnalysisConfig
 	{
 		m_BatchSpan = batchSpan;
 	}
+
+    /**
+     * The latency interval (seconds) during which out-of-order records should be handled.
+     * @return The latency interval (seconds) or <code>null</code> if not set
+     */
+    public Long getLatency()
+    {
+        return m_Latency;
+    }
+
+    /**
+     * Set the latency interval during which out-of-order records should be handled.
+     * @param latency the latency interval in seconds
+     */
+    public void setLatency(Long latency)
+    {
+        m_Latency = latency;
+    }
 
 	/**
 	 * The repeat interval for periodic data in multiples of
@@ -315,43 +276,44 @@ public class AnalysisConfig
 	 * different orders.
 	 */
 	@Override
-	public boolean equals(Object other)
-	{
-		if (this == other)
-		{
-			return true;
-		}
+    public boolean equals(Object other)
+    {
+        if (this == other)
+        {
+            return true;
+        }
 
-		if (other instanceof AnalysisConfig == false)
-		{
-			return false;
-		}
+        if (other instanceof AnalysisConfig == false)
+        {
+            return false;
+        }
 
-		AnalysisConfig that = (AnalysisConfig)other;
+        AnalysisConfig that = (AnalysisConfig)other;
 
-		if (this.m_Detectors.size() != that.m_Detectors.size())
-		{
-			return false;
-		}
+        if (this.m_Detectors.size() != that.m_Detectors.size())
+        {
+            return false;
+        }
 
-		for (int i=0; i<m_Detectors.size(); i++)
-		{
-			if (!this.m_Detectors.get(i).equals(that.m_Detectors.get(i)))
-			{
-				return false;
-			}
-		}
+        for (int i=0; i<m_Detectors.size(); i++)
+        {
+            if (!this.m_Detectors.get(i).equals(that.m_Detectors.get(i)))
+            {
+                return false;
+            }
+        }
 
-		return JobDetails.bothNullOrEqual(this.m_BucketSpan, that.m_BucketSpan) &&
-				JobDetails.bothNullOrEqual(this.m_BatchSpan, that.m_BatchSpan) &&
-				JobDetails.bothNullOrEqual(this.m_Period, that.m_Period) &&
-				JobDetails.bothNullOrEqual(this.m_SummaryCountFieldName, that.m_SummaryCountFieldName);
-	}
+        return Objects.equals(this.m_BucketSpan, that.m_BucketSpan) &&
+                Objects.equals(this.m_BatchSpan, that.m_BatchSpan) &&
+                Objects.equals(this.m_Latency, that.m_Latency) &&
+                Objects.equals(this.m_Period, that.m_Period) &&
+                Objects.equals(this.m_SummaryCountFieldName, that.m_SummaryCountFieldName);
+    }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash(m_Detectors, m_BucketSpan, m_BatchSpan, m_Period,
+        return Objects.hash(m_Detectors, m_BucketSpan, m_BatchSpan, m_Latency, m_Period,
                 m_SummaryCountFieldName);
     }
 }

@@ -20,6 +20,7 @@ package com.prelert.job;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -49,6 +50,7 @@ public class JobConfiguration
 
 	private AnalysisConfig m_AnalysisConfig;
 	private AnalysisLimits m_AnalysisLimits;
+    private List<TransformConfig> m_Transforms;
 	private DataDescription m_DataDescription;
 	private String m_ReferenceJobId;
 	private Long m_Timeout;
@@ -82,7 +84,7 @@ public class JobConfiguration
 
 	/**
 	 * Set the job's ID
-	 * @param name
+	 * @param id
 	 */
 	public void setId(String id)
 	{
@@ -100,7 +102,6 @@ public class JobConfiguration
 
 	/**
 	 * Set the human readable description
-	 * @return
 	 */
 	public void setDescription(String description)
 	{
@@ -167,6 +168,20 @@ public class JobConfiguration
 	public void setTimeout(Long timeout)
 	{
 		m_Timeout = timeout;
+	}
+
+	/**
+	 * The list of transforms.
+	 * @return May be <code>null</code>
+	 */
+	public List<TransformConfig> getTransforms()
+	{
+	    return m_Transforms;
+	}
+
+	public void setTransforms(List<TransformConfig> transforms)
+	{
+	    m_Transforms = transforms;
 	}
 
 	/**

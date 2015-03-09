@@ -315,9 +315,13 @@ public class Bucket
         return m_HadBigNormalisedUpdate;
     }
 
-
     public void resetBigNormalisedUpdateFlag()
     {
         m_HadBigNormalisedUpdate = false;
+    }
+
+    public void raiseBigNormalisedUpdateFlag()
+    {
+        m_HadBigNormalisedUpdate = true;
     }
 }

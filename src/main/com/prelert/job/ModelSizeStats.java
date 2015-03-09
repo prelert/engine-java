@@ -27,63 +27,86 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @JsonIgnoreProperties({"id"})
 public class ModelSizeStats
 {
-	/**
-	 * Field Names
-	 */
-	public static final String ID = "id";
-	public static final String MODEL_BYTES = "modelBytes";
-	public static final String TOTAL_BY_FIELD_COUNT = "totalByFieldCount";
-	public static final String TOTAL_OVER_FIELD_COUNT = "totalOverFieldCount";
-	public static final String TOTAL_PARTITION_FIELD_COUNT = "totalPartitionFieldCount";
+    /**
+     * Field Names
+     */
+    public static final String ID = "id";
+    public static final String MODEL_BYTES = "modelBytes";
+    public static final String TOTAL_BY_FIELD_COUNT = "totalByFieldCount";
+    public static final String TOTAL_OVER_FIELD_COUNT = "totalOverFieldCount";
+    public static final String TOTAL_PARTITION_FIELD_COUNT = "totalPartitionFieldCount";
+    public static final String BUCKET_ALLOCATION_FAILURES_COUNT = "bucketAllocationFailuresCount";
+    public static final String MEMORY_STATUS = "memoryStatus";
 
     /**
-     * type
+     * Elasticsearch type
      */
-	public static final String TYPE = "modelSizeStats";
+    public static final String TYPE = "modelSizeStats";
 
-	private long m_ModelBytes;
-	private long m_TotalByFieldCount;
+    /**
+     * The status of the memory monitored by the ResourceMonitor.
+     * OK is default, SOFT_LIMIT means that the models have done
+     * some aggressive pruning to keep the memory below the limit,
+     * and HARD_LIMIT means that samples have been dropped
+     */
+    public enum MemoryStatus { OK, SOFT_LIMIT, HARD_LIMIT };
+
+    private long m_ModelBytes;
+    private long m_TotalByFieldCount;
     private long m_TotalOverFieldCount;
-	private long m_TotalPartitionFieldCount;
+    private long m_TotalPartitionFieldCount;
+    private long m_BucketAllocationFailuresCount;
+    private MemoryStatus m_MemoryStatus;
 
-	public String getId()
-	{
-		return TYPE;
-	}
+    public ModelSizeStats()
+    {
+        m_ModelBytes = 0;
+        m_ModelBytes = 0;
+        m_TotalByFieldCount = 0;
+        m_TotalOverFieldCount = 0;
+        m_TotalPartitionFieldCount = 0;
+        m_BucketAllocationFailuresCount = 0;
+        m_MemoryStatus = MemoryStatus.OK;
+    }
 
-	public void setId(String id)
-	{
-	}
+    public String getId()
+    {
+        return TYPE;
+    }
 
-	public void setModelBytes(long m)
-	{
-		m_ModelBytes = m;
-	}
+    public void setId(String id)
+    {
+    }
 
-	public long getModelBytes()
-	{
-		return m_ModelBytes;
-	}
+    public void setModelBytes(long m)
+    {
+        m_ModelBytes = m;
+    }
 
-	public void setTotalByFieldCount(long m)
-	{
-		m_TotalByFieldCount = m;
-	}
+    public long getModelBytes()
+    {
+        return m_ModelBytes;
+    }
 
-	public long getTotalByFieldCount()
-	{
-		return m_TotalByFieldCount;
-	}
+    public void setTotalByFieldCount(long m)
+    {
+        m_TotalByFieldCount = m;
+    }
 
-	public void setTotalPartitionFieldCount(long m)
-	{
-		m_TotalPartitionFieldCount = m;
-	}
+    public long getTotalByFieldCount()
+    {
+        return m_TotalByFieldCount;
+    }
 
-	public long getTotalPartitionFieldCount()
-	{
-		return m_TotalPartitionFieldCount;
-	}
+    public void setTotalPartitionFieldCount(long m)
+    {
+        m_TotalPartitionFieldCount = m;
+    }
+
+    public long getTotalPartitionFieldCount()
+    {
+        return m_TotalPartitionFieldCount;
+    }
 
     public void setTotalOverFieldCount(long m)
     {
@@ -95,5 +118,31 @@ public class ModelSizeStats
         return m_TotalOverFieldCount;
     }
 
+    public void setBucketAllocationFailuresCount(long m)
+    {
+        m_BucketAllocationFailuresCount = m;
+    }
+
+    public long getBucketAllocationFailuresCount()
+    {
+        return m_BucketAllocationFailuresCount;
+    }
+
+    public void setMemoryStatus(String m)
+    {
+        if (m == null || m == "")
+        {
+            m_MemoryStatus = MemoryStatus.OK;
+        }
+        else
+        {
+            m_MemoryStatus = MemoryStatus.valueOf(m);
+        }
+    }
+
+    public String getMemoryStatus()
+    {
+        return m_MemoryStatus.name();
+    }
 }
 

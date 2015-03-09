@@ -20,9 +20,6 @@ package com.prelert.rs.data;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-
-import org.apache.log4j.Logger;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -40,8 +37,6 @@ public class Detector
     public static final String NAME = "name";
     public static final String RECORDS = "records";
 
-    private static final Logger LOGGER = Logger.getLogger(Detector.class);
-
     private String m_Name;
     private List<AnomalyRecord> m_Records;
 
@@ -54,23 +49,7 @@ public class Detector
     public Detector(String name)
     {
         this();
-       setName(name);
-    }
-
-    /**
-     * Create the detector from a map. Only the name field is read
-     * @param values
-     */
-    public Detector(Map<String, Object> values)
-    {
-        if (values.containsKey(NAME))
-        {
-            m_Name = values.get(NAME).toString().intern();
-        }
-        else
-        {
-            LOGGER.error("Constructing detector from map with no " + NAME + " field");
-        }
+        setName(name);
     }
 
     public String getName()

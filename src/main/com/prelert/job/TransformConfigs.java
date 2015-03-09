@@ -16,80 +16,59 @@
  *                                                                          *
  ***************************************************************************/
 
-
 package com.prelert.job;
 
-import java.util.Objects;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
- * Analysis limits for autodetect (max model memory size).
- *
- * If an option has not been set it's value will be 0 in which case it
- * shouldn't be used so the default value is picked up instead.
+ * Utility class for methods involving arrays of transforms
  */
-public class AnalysisLimits
+public class TransformConfigs
 {
-	/**
-	 * Serialisation field names
-	 */
-	public static final String MODEL_MEMORY_LIMIT = "modelMemoryLimit";
+    private List<TransformConfig> m_Transforms;
 
-	private long m_ModelMemoryLimit;
-
-	/**
-	 * Initialise values to 0.
-	 * If the values are 0 they haven't been set
-	 */
-	public AnalysisLimits()
-	{
-		m_ModelMemoryLimit = 0;
-	}
-
-	public AnalysisLimits(long modelMemoryLimit)
-	{
-		m_ModelMemoryLimit = modelMemoryLimit;
-	}
-
-	/**
-	 * Maximum size of the model in MB before the anomaly detector
-     * will drop new samples to prevent the model using any more
-     * memory
-	 */
-	public long getModelMemoryLimit()
-	{
-		return m_ModelMemoryLimit;
-	}
-
-	public void setModelMemoryLimit(long value)
-	{
-		m_ModelMemoryLimit = value;
-	}
-
-	/**
-	 * Overridden equality test
-	 */
-	@Override
-	public boolean equals(Object other)
-	{
-		if (this == other)
-		{
-			return true;
-		}
-
-		if (other instanceof AnalysisLimits == false)
-		{
-			return false;
-		}
-
-		AnalysisLimits that = (AnalysisLimits)other;
-		return (this.m_ModelMemoryLimit == that.m_ModelMemoryLimit);
-	}
-
-    @Override
-    public int hashCode()
+    public TransformConfigs(List<TransformConfig> transforms)
     {
-        return Objects.hash(m_ModelMemoryLimit);
+        m_Transforms = transforms;
+        if (m_Transforms == null)
+        {
+            m_Transforms = Collections.emptyList();
+        }
     }
 
-}
 
+    public List<TransformConfig> getTransforms()
+    {
+        return m_Transforms;
+    }
+
+
+    /**
+     * Set of all the field names configured as inputs to the transforms
+     * @return
+     */
+    public Set<String> inputFieldNames()
+    {
+        Set<String> fields = new HashSet<>();
+        for (TransformConfig t : m_Transforms)
+        {
+            fields.addAll(t.getInputs());
+        }
+
+        return fields;
+    }
+
+    public Set<String> outputFieldNames()
+    {
+        Set<String> fields = new HashSet<>();
+        for (TransformConfig t : m_Transforms)
+        {
+            fields.addAll(t.getOutputs());
+        }
+
+        return fields;
+    }
+}

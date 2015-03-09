@@ -605,10 +605,10 @@ public class EngineApiClient implements Closeable
      * @throws IOException
      */
     public Pagination<Bucket> getBuckets(String baseUrl, String jobId, boolean expand,
-            boolean isInterim)
+            boolean includeInterim)
     throws IOException
     {
-        return getBuckets(baseUrl, jobId, expand, isInterim, null, null, null, null);
+        return getBuckets(baseUrl, jobId, expand, includeInterim, null, null, null, null);
     }
 
     /**
@@ -622,7 +622,6 @@ public class EngineApiClient implements Closeable
      * e.g <code>http://localhost:8080/engine/v1/</code>
      * @param jobId The Job's unique Id
      * @param expand If true include the anomaly records for the bucket
-     * @param includeInterim Include interim results
      * @param anomalyScoreThreshold Return only buckets with an anomalyScore >=
      * this value. If <code>null</code> then ignored
      * @param normalizedProbabilityThreshold Return only buckets with a maxNormalizedProbability >=
@@ -1080,7 +1079,7 @@ public class EngineApiClient implements Closeable
      * @param end The end date filter as either a Long (seconds from epoch)
      * or an ISO 8601 date String. If <code>null</code> then ignored
      * @param sortField The field to sort the results by, ignored if <code>null</code>
-     * @param sort_descending If sort_field is not <code>null</code> then sort
+     * @param sortDescending If sort_field is not <code>null</code> then sort
      * records in descending order if true else sort ascending
      * @param anomalyScoreFilterValue If not <code>null</code> return only the
      * records with an anomalyScore >= anomalyScoreFilterValue
@@ -1123,7 +1122,7 @@ public class EngineApiClient implements Closeable
      * or an ISO 8601 date String. If <code>null</code> then ignored
      * @param includeInterim Include interim results
      * @param sortField The field to sort the results by, ignored if <code>null</code>
-     * @param sort_descending If sort_field is not <code>null</code> then sort
+     * @param sortDescending If sort_field is not <code>null</code> then sort
      * records in descending order if true else sort ascending
      * @param anomalyScoreFilterValue If not <code>null</code> return only the
      * records with an anomalyScore >= anomalyScoreFilterValue
@@ -1336,12 +1335,12 @@ public class EngineApiClient implements Closeable
      * @throws ClientProtocolException
      * @throws IOException
      */
-    public String tailLog(String baseUrl, String jobId, String filename,
+    public String tailLog(String baseUrl, String jobId, String logfileName,
             int lineCount)
     throws ClientProtocolException, IOException
     {
         String url = String.format("%s/logs/%s/%s/tail?lines=%d",
-                baseUrl, jobId, filename, lineCount);
+                baseUrl, jobId, logfileName, lineCount);
 
         LOGGER.debug("GET tail log " + url);
 
@@ -1502,7 +1501,7 @@ public class EngineApiClient implements Closeable
      * @throws JsonParseException
      * @throws JsonMappingException
      * @throws IOException
-     * @see get(URI, TypeReference<T>)
+     * @see #get(URI, TypeReference)
      */
     public <T> T get(String fullUrl, TypeReference<T> typeRef)
     throws JsonParseException, JsonMappingException, IOException
@@ -1516,12 +1515,12 @@ public class EngineApiClient implements Closeable
      * the type referenced in <code>typeRef</code>. A <code>TypeReference</code>
      * has to be used to preserve the generic type information that is usually
      * lost in due to erasure.
-     * <br/>
+     * <br>
      * If the response code is 200 or 404 try to parse the returned content
      * into an object of the generic parameter type <code>T</code>.
      * The 404 status code is not considered an error it simply means an
      * empty document was returned by the API.
-     * <br/>
+     * <br>
      * This method is useful for paging through a set of results via the
      * next or previous page links in a {@link Pagination} object.
      *
@@ -1531,7 +1530,7 @@ public class EngineApiClient implements Closeable
      * @throws JsonParseException
      * @throws JsonMappingException
      * @throws IOException
-     * @see get(String, TypeReference<T>)
+     * @see #get(String, TypeReference)
      */
     public <T> T get(URI uri, TypeReference<T> typeRef)
     throws JsonParseException, JsonMappingException, IOException

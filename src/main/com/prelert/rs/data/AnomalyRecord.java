@@ -354,22 +354,6 @@ public class AnomalyRecord
         m_Parent = parent.intern();
     }
 
-
-    private boolean bothNullOrEqual(Object o1, Object o2)
-    {
-        if (o1 == null && o2 == null)
-        {
-            return true;
-        }
-
-        if (o1 == null || o2 == null)
-        {
-            return false;
-        }
-
-        return o1.equals(o2);
-    }
-
     @Override
     public int hashCode()
     {
@@ -409,19 +393,19 @@ public class AnomalyRecord
         boolean equal = this.m_Probability == that.m_Probability &&
                 this.m_AnomalyScore == that.m_AnomalyScore &&
                 this.m_NormalizedProbability == that.m_NormalizedProbability &&
-                bothNullOrEqual(this.m_Typical, that.m_Typical) &&
-                bothNullOrEqual(this.m_Actual, that.m_Actual) &&
-                bothNullOrEqual(this.m_Function, that.m_Function) &&
-                bothNullOrEqual(this.m_FieldName, that.m_FieldName) &&
-                bothNullOrEqual(this.m_ByFieldName, that.m_ByFieldName) &&
-                bothNullOrEqual(this.m_ByFieldValue, that.m_ByFieldValue) &&
-                bothNullOrEqual(this.m_PartitionFieldName, that.m_PartitionFieldName) &&
-                bothNullOrEqual(this.m_PartitionFieldValue, that.m_PartitionFieldValue) &&
-                bothNullOrEqual(this.m_OverFieldName, that.m_OverFieldName) &&
-                bothNullOrEqual(this.m_OverFieldValue, that.m_OverFieldValue) &&
-                bothNullOrEqual(this.m_Timestamp, that.m_Timestamp) &&
-                bothNullOrEqual(this.m_Parent, that.m_Parent) &&
-                bothNullOrEqual(this.m_IsInterim, that.m_IsInterim);
+                Objects.equals(this.m_Typical, that.m_Typical) &&
+                Objects.equals(this.m_Actual, that.m_Actual) &&
+                Objects.equals(this.m_Function, that.m_Function) &&
+                Objects.equals(this.m_FieldName, that.m_FieldName) &&
+                Objects.equals(this.m_ByFieldName, that.m_ByFieldName) &&
+                Objects.equals(this.m_ByFieldValue, that.m_ByFieldValue) &&
+                Objects.equals(this.m_PartitionFieldName, that.m_PartitionFieldName) &&
+                Objects.equals(this.m_PartitionFieldValue, that.m_PartitionFieldValue) &&
+                Objects.equals(this.m_OverFieldName, that.m_OverFieldName) &&
+                Objects.equals(this.m_OverFieldValue, that.m_OverFieldValue) &&
+                Objects.equals(this.m_Timestamp, that.m_Timestamp) &&
+                Objects.equals(this.m_Parent, that.m_Parent) &&
+                Objects.equals(this.m_IsInterim, that.m_IsInterim);
 
         if (this.m_Causes == null && that.m_Causes == null)
         {
