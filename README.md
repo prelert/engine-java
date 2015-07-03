@@ -130,15 +130,14 @@ This also causes the analytic process to flush its results buffer.
 
     engineApiClient.closeJob(baseUrl, jobId);
 
-We can now request the results using one of the client's _getBucket_ functions. In
-this case the third parameter tells the client whether or not to include the anomaly
-records in the bucket results for now we just want the buckets and their anomaly
-scores.
+We can now request the results using the fluent [BucketsRequestBuilder](src/main/com/prelert/rs/client/BucketsRequestBuilder.java) class. In this example the first 100 buckets are requested, for now we just 
+want the buckets not the anomaly records so the `expand` option is not used.
 
-    Pagination<Bucket> page = engineApiClient.getBuckets(baseUrl, jobId, false);
+    BucketsRequestBuilder builder = new BucketsRequestBuilder(engineApiClient, jobId).take(100);
+    Pagination<Bucket> page = builder.get();
 
-`getBuckets` returns a `Pagination` object containing the buckets. If there are
-more than one page of results `page.getNextPage()` returns the URI to the next page
+The `get()` method returns a [Pagination](src/main/com/prelert/rs/data/Pagination.java) object containing the buckets. 
+If there are more than one page of results `page.getNextPage()` returns the URI to the next page
 of buckets.
 
     while (page.getNextPage() != null)
@@ -147,11 +146,9 @@ of buckets.
         page = engineApiClient.get(page.getNextPage().toString(),
                 new TypeReference<Pagination<Bucket>>() {});
 
-        // Alternatively use the skip and take parameters
+        // Alternatively use the skip parameter to get the next page
         /*
-        page = engineApiClient.getBuckets(baseUrl, jobId, false,
-                new Long(page.getSkip() + page.getTake()),
-                new Long(page.getTake()));
+        page = builder.skip(skip).get();
         */
 
         ...
@@ -202,31 +199,30 @@ bucket and
 Reviewing the output we see that the bucket contains 2 records one of which is highly anomalous:
 
     {
-      "detectors" : [ ],
-      "timestamp" : "2013-01-30T16:00:00.000+0000",
-      "anomalyScore" : 10.276,
-      "recordCount" : 2,
+      "id" : "1403712000",
+      "timestamp" : "2014-06-25T16:00:00.000+0000",
+      "anomalyScore" : 82.2778,
+      "maxNormalizedProbability" : 99.9805,
+      "rawAnomalyScore" : 22.3641,
+      "recordCount" : 1,
       "records" : [ {
-        "fieldName" : "responsetime",
+        "timestamp" : "2014-06-25T16:00:00.000+0000",
         "byFieldName" : "airline",
         "function" : "mean",
-        "anomalyScore" : 10.276,
-        "probability" : 5.24776E-39,
+        "anomalyScore" : 82.2778,
+        "fieldName" : "responsetime",
+        "normalizedProbability" : 99.9805,
+        "probability" : 6.04077E-36,
         "byFieldValue" : "AAL",
-        "typical" : 101.651,
+        "typical" : 100.852,
         "actual" : 242.75
-      }, {
-        "function" : "count",
-        "anomalyScore" : 0.0,
-        "simpleCount" : true,
-        "probability" : 1.0,
-        "actual" : 909.0
-      } ]
+      } ],
+      "eventCount" : 909
     }
 
-In the bucket at time *2013-01-30T16:00:00.000+0000* the *responsetime* value for the
+In the bucket at time *2014-06-25T16:00:00.000+0000* the *responsetime* value for the
 airline *AAL* has a *mean* (function = mean) value of 242.75 compared to the typical
-bucket mean of 101.651.
+bucket mean of 100.852.
 
 The second record where *function = count* and *simpleCount = true* is the number of records
 analyzed in the bucket. Records of this type serve only to track the number of records processed

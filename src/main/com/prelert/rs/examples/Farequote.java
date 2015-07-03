@@ -273,8 +273,8 @@ public class Farequote
 	 		engineApiClient.closeJob(jobId);
 
 	 		// results are available immediately after the close
-	 		BucketsRequestBuilder builder = new BucketsRequestBuilder(engineApiClient, jobId);
-	 		Pagination<Bucket> page = builder.take(100).get();
+	 		BucketsRequestBuilder builder = new BucketsRequestBuilder(engineApiClient, jobId).take(100);
+	 		Pagination<Bucket> page = builder.get();
 	 		if (page.getDocumentCount() == 0 && engineApiClient.getLastError() == null)
 	 		{
 				s_Logger.error("Error reading analysis results");
