@@ -1,6 +1,6 @@
 /****************************************************************************
  *                                                                          *
- * Copyright 2014 Prelert Ltd                                               *
+ * Copyright 2015 Prelert Ltd                                               *
  *                                                                          *
  * Licensed under the Apache License, Version 2.0 (the "License");          *
  * you may not use this file except in compliance with the License.         *
@@ -16,31 +16,42 @@
  *                                                                          *
  ***************************************************************************/
 
-package com.prelert.job;
+
+package com.prelert.job.transform;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.prelert.job.transform.condition.Condition;
+
 /**
  * Represents an API data transform
  */
+@JsonInclude(Include.NON_NULL)
 public class TransformConfig
 {
     // Serialisation strings
     public static final String TYPE = "transform";
     public static final String TRANSFORM = "transform";
+    public static final String ARGUMENTS = "arguments";
     public static final String INPUTS = "inputs";
     public static final String OUTPUTS = "outputs";
 
 
     private List<String> m_Inputs;
     private String m_Name;
+    private List<String> m_Arguments;
     private List<String> m_Outputs;
     private TransformType m_Type;
+    private Condition m_Condition;
+
 
     public TransformConfig()
     {
+        m_Arguments = Collections.emptyList();
     }
 
     public List<String> getInputs()
@@ -63,18 +74,21 @@ public class TransformConfig
         m_Name = type;
     }
 
+    public List<String> getArguments()
+    {
+        return m_Arguments;
+    }
+
+    public void setArguments(List<String> args)
+    {
+        m_Arguments = args;
+    }
+
     public List<String> getOutputs()
     {
         if (m_Outputs == null || m_Outputs.isEmpty())
         {
-            try
-            {
-                m_Outputs = type().defaultOutputNames();
-            }
-            catch (IllegalArgumentException e)
-            {
-                m_Outputs = Collections.emptyList();
-            }
+            m_Outputs = type().defaultOutputNames();
         }
 
         return m_Outputs;
@@ -86,10 +100,24 @@ public class TransformConfig
     }
 
     /**
+     * The condition object which may or may not be defined for this
+     * transform
+     * @return May be <code>null</code>
+     */
+    public Condition getCondition()
+    {
+        return m_Condition;
+    }
+
+    public void setCondition(Condition condition)
+    {
+        m_Condition = condition;
+    }
+
+    /**
      * This field shouldn't be serialised as its created dynamically
      * Type may be null when the class is constructed.
      * @return
-     * @throws IllegalArgumentException if the type name is not recognized.
      */
     public TransformType type()
     {
@@ -110,7 +138,7 @@ public class TransformConfig
     @Override
     public int hashCode()
     {
-        return Objects.hash(m_Inputs, m_Name, m_Outputs, m_Type);
+        return Objects.hash(m_Inputs, m_Name, m_Outputs, m_Type, m_Arguments);
     }
 
     @Override
@@ -132,9 +160,11 @@ public class TransformConfig
 
         TransformConfig other = (TransformConfig) obj;
 
-        return Objects.equals(this.m_Inputs, other.m_Inputs)
+        return Objects.equals(this.m_Type, other.m_Type)
                 && Objects.equals(this.m_Name, other.m_Name)
+                && Objects.equals(this.m_Inputs, other.m_Inputs)
                 && Objects.equals(this.m_Outputs, other.m_Outputs)
-                && Objects.equals(this.m_Type, other.m_Type);
+                && Objects.equals(this.m_Arguments, other.m_Arguments)
+                && Objects.equals(this.m_Condition, other.m_Condition);
     }
 }

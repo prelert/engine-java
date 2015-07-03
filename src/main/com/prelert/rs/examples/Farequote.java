@@ -1,6 +1,6 @@
 /****************************************************************************
  *                                                                          *
- * Copyright 2014 Prelert Ltd                                               *
+ * Copyright 2015 Prelert Ltd                                               *
  *                                                                          *
  * Licensed under the Apache License, Version 2.0 (the "License");          *
  * you may not use this file except in compliance with the License.         *
@@ -35,7 +35,6 @@ import org.apache.log4j.Logger;
 import org.apache.log4j.PatternLayout;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -44,22 +43,25 @@ import com.prelert.job.DataDescription;
 import com.prelert.job.Detector;
 import com.prelert.job.JobConfiguration;
 import com.prelert.job.JobDetails;
+import com.prelert.job.results.Bucket;
+import com.prelert.rs.client.BucketRequestBuilder;
+import com.prelert.rs.client.BucketsRequestBuilder;
 import com.prelert.rs.client.EngineApiClient;
 import com.prelert.rs.data.ApiError;
-import com.prelert.rs.data.Bucket;
+import com.prelert.rs.data.MultiDataPostResult;
 import com.prelert.rs.data.Pagination;
 import com.prelert.rs.data.SingleDocument;
 
 /**
  * Example of using the Prelert Engine API Java client.
- * 
+ *
  * This class shows how to configure and create a new job,
  * upload data for analysis and inspect the results. See
  * <a href=https://github.com/prelert/engine-java/blob/master/README.md>
- * https://github.com/prelert/engine-java/blob/master/README.md</a> 
+ * https://github.com/prelert/engine-java/blob/master/README.md</a>
  * for more details.
  * <p/>
- * The data used in this example can be downloaded from 
+ * The data used in this example can be downloaded from
  * <a href=http://s3.amazonaws.com/prelert_demo/farequote.csv>
  * http://s3.amazonaws.com/prelert_demo/farequote.csv</a>
  * the first 5 lines of which should resemble:<p/>
@@ -71,7 +73,7 @@ import com.prelert.rs.data.SingleDocument;
  * </code>
  * <p/>
  * The <code>main</code> method takes 2 arguments - the path to farequote.csv
- * and optionally the URL of the REST API. If the URL is not passed 
+ * and optionally the URL of the REST API. If the URL is not passed
  * {@value #API_BASE_URL} is used.
  */
 public class Farequote
@@ -80,60 +82,60 @@ public class Farequote
 	 * The default base Url
 	 */
 	static final public String API_BASE_URL = "http://localhost:8080/engine/v1";
-	
+
 	static final private Logger s_Logger = Logger.getLogger(Farequote.class);
-	
-	
+
+
 	/**
 	 * Object to JSON mapper.
 	 * Writes dates in ISO 8601 format
 	 */
-	static final private ObjectWriter s_ObjectWriter = 
+	static final private ObjectWriter s_ObjectWriter =
 			new ObjectMapper()
 				.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
 				.writer().withDefaultPrettyPrinter();
-	
+
 	/**
 	 * Create the job configuration for the farequote data set.
-	 * The config has one detector set to analyze the field 
+	 * The config has one detector set to analyze the field
 	 * 'responsetime' by the field 'airline' using the 'metric'
-	 * functions. The data is CSV format with a time field formatted 
+	 * functions. The data is CSV format with a time field formatted
 	 * as 2014-05-19 00:00:00+0000. Bucket span is set to 1 hour.
-	 * 
+	 *
 	 * @return The job configuration.
 	 */
-	static public JobConfiguration createFarequoteJobConfig() 
+	static public JobConfiguration createFarequoteJobConfig()
 	{
 		// Configure a detector
 		Detector responseTimebyAirline = new Detector();
 		responseTimebyAirline.setFieldName("responsetime");
 		responseTimebyAirline.setByFieldName("airline");
 		responseTimebyAirline.setFunction(Detector.METRIC);
-				
+
 		AnalysisConfig ac = new AnalysisConfig();
 		ac.setBucketSpan(3600L); // 3600 seconds = 1 hour
 		ac.setDetectors(Arrays.asList(responseTimebyAirline));
-		
+
 		// Data is CSV format with time field such as 2014-05-19 00:00:00+0000
 		DataDescription dd = new DataDescription();
-		dd.setFormat(DataDescription.DataFormat.DELINEATED);
+		dd.setFormat(DataDescription.DataFormat.DELIMITED);
 		dd.setFieldDelimiter(',');
 		dd.setTimeField("time");
 		dd.setTimeFormat("yyyy-MM-dd HH:mm:ssX");
-		
-		
+
+
 		JobConfiguration jobConfig = new JobConfiguration();
 		jobConfig.setAnalysisConfig(ac);
 		jobConfig.setDataDescription(dd);
-		
+
 		return jobConfig;
 	}
-	
-	
+
+
 	/**
 	 * Check for the last error from the REST API and log if present.
-	 * 
-	 * @param error The error to report, if <code>null</code> nothing 
+	 *
+	 * @param error The error to report, if <code>null</code> nothing
 	 * is reported
 	 */
 	static public void reportApiErrorMessage(ApiError error)
@@ -143,8 +145,8 @@ public class Farequote
 			s_Logger.warn(error.toJson());
 		}
 	}
-	
-	
+
+
 	/**
 	 * Print the CSV header for the bucket scores
 	 */
@@ -152,106 +154,106 @@ public class Farequote
 	{
 		System.out.println("Time, Bucket Id, Anomaly Score, Unusual Score");
 	}
-	
-	
+
+
 	/**
 	 * Print the bucket time, id and anomaly score to std out
 	 * in CSV format.
-	 * 
-	 * @param buckets The bucket results 
+	 *
+	 * @param buckets The bucket results
 	 */
 	static public void printBucketScores(List<Bucket> buckets)
 	{
 		for (Bucket bucket : buckets)
 		{
-			System.out.println(String.format("%s,%s,%f,%f", 
+			System.out.println(String.format("%s,%s,%f,%f",
 					bucket.getTimestamp().toString(),
 					bucket.getId(),
 					bucket.getAnomalyScore(),
 					bucket.getMaxNormalizedProbability()));
 		}
 	}
-	
+
 	/**
 	 * Print the bucket as a JSON document.
-	 * 
-	 * @throws JsonProcessingException 
+	 *
+	 * @throws JsonProcessingException
 	 */
-	static public void printBucket(Bucket bucket) 
+	static public void printBucket(Bucket bucket)
 	throws JsonProcessingException
 	{
 		System.out.println(s_ObjectWriter.writeValueAsString(bucket));
 	}
-	
-	
+
+
 	/**
-	 * Create a new Engine API analytics job, upload data to it and 
-	 * print the results.  
-	 * 
+	 * Create a new Engine API analytics job, upload data to it and
+	 * print the results.
+	 *
 	 * @param args If set the first argument is the path to farequote.csv
-	 * and must be set. The second argument is the Engine API Url if not set 
+	 * and must be set. The second argument is the Engine API Url if not set
 	 * {@value #API_BASE_URL} is used.
-	 * 
-	 * @throws ClientProtocolException 
+	 *
+	 * @throws ClientProtocolException
 	 * @throws IOException
 	 */
-	public static void main(String[] args) 
-	throws ClientProtocolException, IOException 
+	public static void main(String[] args)
+	throws ClientProtocolException, IOException
 	{
 		// configure logging to console
-		ConsoleAppender console = new ConsoleAppender(); 		
-		console.setLayout(new PatternLayout("%d [%p|%c|%C{1}] %m%n")); 
+		ConsoleAppender console = new ConsoleAppender();
+		console.setLayout(new PatternLayout("%d [%p|%c|%C{1}] %m%n"));
 		console.setThreshold(Level.INFO);
 		console.activateOptions();
 		Logger.getRootLogger().addAppender(console);
-				
+
 		if (args.length == 0)
 		{
 			System.out.println("This script expects at least one argument - "
 					+ "the path to farequote.csv. Download the file from "
 					+ "http://s3.amazonaws.com/prelert_demo/farequote.csv");
 			System.out.println("Usage: The first (mandatory) argument is the path to "
-					+ "farequote.csv the second (optional) argument is the API " 
+					+ "farequote.csv the second (optional) argument is the API "
 					+ "Url, the default is " +  API_BASE_URL);
-			
+
 			return;
 		}
-		
+
 		File dataFile = new File(args[0]);
 		FileInputStream fileStream;
 		try
 		{
 			fileStream = new FileInputStream(dataFile);
-		}	
+		}
 		catch (FileNotFoundException e)
 		{
 			s_Logger.error("Cannot find data file " + dataFile, e);
 			return;
 		}
 
-		
+
 		String baseUrl = API_BASE_URL;
 		if (args.length > 1)
 		{
 			baseUrl = args[1];
 		}
-		
-		
+
+
 		// Create the job config
 		JobConfiguration jobConfig = Farequote.createFarequoteJobConfig();
-		
-		try (EngineApiClient engineApiClient = new EngineApiClient())
+
+		try (EngineApiClient engineApiClient = new EngineApiClient(baseUrl))
 		{
-			String jobId = engineApiClient.createJob(baseUrl, jobConfig);
+			String jobId = engineApiClient.createJob(jobConfig);
 			if (jobId == null || jobId.isEmpty())
 			{
 				s_Logger.error("No Job Id returned by create job");
 				reportApiErrorMessage(engineApiClient.getLastError());
 				return;
 			}
-			
+
 			// Review the job details
-			SingleDocument<JobDetails> jobDoc = engineApiClient.getJob(baseUrl, jobId);
+			SingleDocument<JobDetails> jobDoc = engineApiClient.getJob(jobId);
 			if (jobDoc.isExists() == false)
 			{
 				// Strange, the job does not exist review any error messages
@@ -259,52 +261,52 @@ public class Farequote
 				return;
 			}
 
-			boolean success = engineApiClient.streamingUpload(baseUrl, jobId, fileStream, false);
-	 		if (success == false)
+			MultiDataPostResult uploadSummary = engineApiClient.streamingUpload(jobId, fileStream, false);
+	 		if (uploadSummary.getResponses().get(0).getError() != null)
 	 		{
 				s_Logger.error("Failed to upload file to job " + jobId);
-				reportApiErrorMessage(engineApiClient.getLastError());
+				reportApiErrorMessage(uploadSummary.getResponses().get(0).getError());
 				return;
 	 		}
-	 		
-	 		// commit the uploaded data and close the job.	 		
-	 		engineApiClient.closeJob(baseUrl, jobId);
-	 				
+
+	 		// commit the uploaded data and close the job.
+	 		engineApiClient.closeJob(jobId);
+
 	 		// results are available immediately after the close
-	 		Pagination<Bucket> page = engineApiClient.getBuckets(baseUrl, jobId, false, 0.0, 0.0);
+	 		BucketsRequestBuilder builder = new BucketsRequestBuilder(engineApiClient, jobId);
+	 		Pagination<Bucket> page = builder.take(100).get();
 	 		if (page.getDocumentCount() == 0 && engineApiClient.getLastError() == null)
 	 		{
 				s_Logger.error("Error reading analysis results");
 				reportApiErrorMessage(engineApiClient.getLastError());
 				return;
 	 		}
-	 		
+
 	 		// print
 	 		printBucketScoresHeader();
 	 		printBucketScores(page.getDocuments());
-	 		
+
 	 		List<Bucket> allBuckets = new ArrayList<>(page.getDocuments());
-	 		
+
+	 		int skip = page.getDocumentCount();
 	 		while (page.getNextPage() != null)
 	 		{
-	 			// get next page using the generic get and TypeReference
+	 		    // get the next page of results
+	 		    page = builder.skip(skip).get();
+	 		    skip += page.getDocumentCount();
+
+	 		    // or get next page using the next page URL, generic get and TypeReference
+	 		    /*
 	 			page = engineApiClient.get(page.getNextPage().toString(),
 	 					new TypeReference<Pagination<Bucket>>() {});
-	 			
-	 			
-	 			// or use the skip and take parameters
-	 			/*
-	 			page = engineApiClient.getBuckets(baseUrl, jobId, false, 
-	 					new Long(page.getSkip() + page.getTake()), 
-	 					new Long(page.getTake()));
-	 			*/
-	 			
+	 		    */
+
 	 			printBucketScores(page.getDocuments());
 	 			allBuckets.addAll(page.getDocuments());
 	 		}
-	 		
+
 	 		// Sort by anomaly score
-	 		Collections.sort(allBuckets, new Comparator<Bucket>() { 
+	 		Collections.sort(allBuckets, new Comparator<Bucket>() {
 				@Override
 	            public int compare(Bucket b1, Bucket b2)
 	            {
@@ -312,33 +314,33 @@ public class Farequote
 		 						b1.getAnomalyScore());
 	            }
 	 		});
-	 		
+
 	 		if (allBuckets.size() > 0)
 	 		{
 	 			String bucketId = allBuckets.get(0).getId();
-	 			
+
 	 		    // ask for the bucket and its anomaly records
-	 			SingleDocument<Bucket> bucket = 
-	 					engineApiClient.getBucket(baseUrl, jobId, bucketId, true);
+	 			SingleDocument<Bucket> bucket = new
+	 			        BucketRequestBuilder(engineApiClient, jobId, bucketId).expand(true).get();
 	 			if (bucket.isExists() == false)
 	 			{
 	 				// error, where has the bucket gone?
-	 				reportApiErrorMessage(engineApiClient.getLastError());	 				
+	 				reportApiErrorMessage(engineApiClient.getLastError());
 	 			}
-	 			else		
+	 			else
 	 			{
 	 				String msg = String.format(
 	 						"The bucket at time %1$TF %1$TT%1$Tz has the "
-	 						+ "largest anomaly score with a value of %2$f", 
+	 						+ "largest anomaly score with a value of %2$f",
 	 						bucket.getDocument().getTimestamp(),
 	 						bucket.getDocument().getAnomalyScore());
-	 				
+
 	 				System.out.println(msg);
-	 				printBucket(bucket.getDocument());	
+	 				printBucket(bucket.getDocument());
 	 			}
 	 		}
-	 		
+
 		}
 	}
-	
+
 }

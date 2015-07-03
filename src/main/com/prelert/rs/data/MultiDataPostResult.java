@@ -1,6 +1,6 @@
 /****************************************************************************
  *                                                                          *
- * Copyright 2014 Prelert Ltd                                               *
+ * Copyright 2015 Prelert Ltd                                               *
  *                                                                          *
  * Licensed under the Apache License, Version 2.0 (the "License");          *
  * you may not use this file except in compliance with the License.         *
@@ -15,60 +15,92 @@
  * limitations under the License.                                           *
  *                                                                          *
  ***************************************************************************/
-
 package com.prelert.rs.data;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 /**
- * Represents the anomaly detector.
- * Only the detector name is serialised anomaly records aren't.
+ * List of {@linkplain DataPostResponse}
  */
+@JsonIgnoreProperties("anErrorOccurred")
 @JsonInclude(Include.NON_NULL)
-@JsonIgnoreProperties({"records"})
-public class Detector
+public class MultiDataPostResult
 {
-    public static final String TYPE = "detector";
-    public static final String NAME = "name";
-    public static final String RECORDS = "records";
+    private List<DataPostResponse> m_Responses;
 
-    private String m_Name;
-    private List<AnomalyRecord> m_Records;
-
-
-    public Detector()
+    public MultiDataPostResult()
     {
-        m_Records = new ArrayList<>();
+        m_Responses = new ArrayList<DataPostResponse>();
     }
 
-    public Detector(String name)
+    public List<DataPostResponse> getResponses()
     {
-        this();
-        setName(name);
+        return m_Responses;
     }
 
-    public String getName()
+    public void setResponses(List<DataPostResponse> results)
     {
-        return m_Name;
+        this.m_Responses = results;
     }
 
-    public void setName(String name)
+    public void addResult(DataPostResponse result)
     {
-        m_Name = name.intern();
+        this.m_Responses.add(result);
     }
 
-    public void addRecord(AnomalyRecord record)
+    /**
+     * Return true if any of the uploads errored.
+     * @return
+     */
+    public boolean anErrorOccurred()
     {
-        m_Records.add(record);
+        for (DataPostResponse response : m_Responses)
+        {
+            if (response.getError() != null)
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
-    public List<AnomalyRecord> getRecords()
+    @Override
+    public int hashCode()
     {
-        return m_Records;
+        final int prime = 31;
+        int result = 1;
+        result = prime * result
+                + ((m_Responses == null) ? 0 : m_Responses.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj)
+    {
+        if (this == obj)
+        {
+            return true;
+        }
+
+        if (obj == null)
+        {
+            return false;
+        }
+
+        if (getClass() != obj.getClass())
+        {
+            return false;
+        }
+
+        MultiDataPostResult other = (MultiDataPostResult) obj;
+
+        return Objects.equals(this.m_Responses, other.m_Responses);
     }
 }

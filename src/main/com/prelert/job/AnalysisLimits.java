@@ -1,6 +1,6 @@
 /****************************************************************************
  *                                                                          *
- * Copyright 2014 Prelert Ltd                                               *
+ * Copyright 2015 Prelert Ltd                                               *
  *                                                                          *
  * Licensed under the Apache License, Version 2.0 (the "License");          *
  * you may not use this file except in compliance with the License.         *
@@ -16,80 +16,104 @@
  *                                                                          *
  ***************************************************************************/
 
-
 package com.prelert.job;
 
 import java.util.Objects;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+
 /**
- * Analysis limits for autodetect (max model memory size).
+ * Analysis limits for autodetect
  *
- * If an option has not been set it's value will be 0 in which case it
- * shouldn't be used so the default value is picked up instead.
+ * If an option has not been set it shouldn't be used so the default value is picked up instead.
  */
+@JsonInclude(Include.NON_NULL)
 public class AnalysisLimits
 {
-	/**
-	 * Serialisation field names
-	 */
-	public static final String MODEL_MEMORY_LIMIT = "modelMemoryLimit";
+    /**
+     * Serialisation field names
+     */
+    public static final String MODEL_MEMORY_LIMIT = "modelMemoryLimit";
+    public static final String CATEGORIZATION_EXAMPLES_LIMIT = "categorizationExamplesLimit";
 
-	private long m_ModelMemoryLimit;
+    /** It is initialised to 0. A value of 0 indicates it was not set. */
+    private long m_ModelMemoryLimit;
 
-	/**
-	 * Initialise values to 0.
-	 * If the values are 0 they haven't been set
-	 */
-	public AnalysisLimits()
-	{
-		m_ModelMemoryLimit = 0;
-	}
+    /**
+     * It is initialised to <code>null</code>.
+     * A value of <code>null</code> indicates it was not set.
+     * */
+    private Long m_CategorizationExamplesLimit;
 
-	public AnalysisLimits(long modelMemoryLimit)
-	{
-		m_ModelMemoryLimit = modelMemoryLimit;
-	}
+    public AnalysisLimits()
+    {
+        m_ModelMemoryLimit = 0;
+        m_CategorizationExamplesLimit = null;
+    }
 
-	/**
-	 * Maximum size of the model in MB before the anomaly detector
+    public AnalysisLimits(long modelMemoryLimit, Long categorizationExamplesLimit)
+    {
+        m_ModelMemoryLimit = modelMemoryLimit;
+        m_CategorizationExamplesLimit = categorizationExamplesLimit;
+    }
+
+    /**
+     * Maximum size of the model in MB before the anomaly detector
      * will drop new samples to prevent the model using any more
      * memory
-	 */
-	public long getModelMemoryLimit()
-	{
-		return m_ModelMemoryLimit;
-	}
+     *
+     * @return The set memory limit or 0 if not set
+     */
+    public long getModelMemoryLimit()
+    {
+        return m_ModelMemoryLimit;
+    }
 
-	public void setModelMemoryLimit(long value)
-	{
-		m_ModelMemoryLimit = value;
-	}
+    public void setModelMemoryLimit(long value)
+    {
+        m_ModelMemoryLimit = value;
+    }
 
-	/**
-	 * Overridden equality test
-	 */
-	@Override
-	public boolean equals(Object other)
-	{
-		if (this == other)
-		{
-			return true;
-		}
+    /**
+     * Gets the limit to the number of examples that are stored per category
+     * @return the limit or <code>null</code> if not set
+     */
+    public Long getCategorizationExamplesLimit()
+    {
+        return m_CategorizationExamplesLimit;
+    }
 
-		if (other instanceof AnalysisLimits == false)
-		{
-			return false;
-		}
+    public void setCategorizationExamplesLimit(Long value)
+    {
+        m_CategorizationExamplesLimit = value;
+    }
 
-		AnalysisLimits that = (AnalysisLimits)other;
-		return (this.m_ModelMemoryLimit == that.m_ModelMemoryLimit);
-	}
+    /**
+     * Overridden equality test
+     */
+    @Override
+    public boolean equals(Object other)
+    {
+        if (this == other)
+        {
+            return true;
+        }
+
+        if (other instanceof AnalysisLimits == false)
+        {
+            return false;
+        }
+
+        AnalysisLimits that = (AnalysisLimits)other;
+        return this.m_ModelMemoryLimit == that.m_ModelMemoryLimit
+                && Objects.equals(this.m_CategorizationExamplesLimit,
+                        that.m_CategorizationExamplesLimit);
+    }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash(m_ModelMemoryLimit);
+        return Objects.hash(m_ModelMemoryLimit, m_CategorizationExamplesLimit);
     }
-
 }
-

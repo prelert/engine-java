@@ -1,6 +1,6 @@
 /****************************************************************************
  *                                                                          *
- * Copyright 2014 Prelert Ltd                                               *
+ * Copyright 2015 Prelert Ltd                                               *
  *                                                                          *
  * Licensed under the Apache License, Version 2.0 (the "License");          *
  * you may not use this file except in compliance with the License.         *
@@ -15,13 +15,16 @@
  * limitations under the License.                                           *
  *                                                                          *
  ***************************************************************************/
-
 package com.prelert.job;
 
 import java.net.URI;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.prelert.job.transform.TransformConfig;
 
 /**
  * This class represents a configured and created Job. The creation time is
@@ -31,6 +34,7 @@ import java.util.Objects;
  * respectively. If the job was created to read data from a list of files
  * FileUrls will be a non-empty list else the expects data to be streamed to it.
  */
+@JsonInclude(Include.NON_NULL)
 public class JobDetails
 {
     public static final long DEFAULT_TIMEOUT = 600;
@@ -45,26 +49,15 @@ public class JobDetails
     public static final String FINISHED_TIME = "finishedTime";
     public static final String LAST_DATA_TIME = "lastDataTime";
 
-    public static final String COUNTS = "counts";
-    public static final String BUCKET_COUNT = "bucketCount";
-    public static final String PROCESSED_RECORD_COUNT = "processedRecordCount";
-    public static final String PROCESSED_FIELD_COUNT = "processedFieldCount";
-    public static final String INPUT_BYTES = "inputBytes";
-    public static final String INPUT_RECORD_COUNT = "inputRecordCount";
-    public static final String INPUT_FIELD_COUNT = "inputFieldCount";
-    public static final String INVALID_DATE_COUNT = "invalidDateCount";
-    public static final String MISSING_FIELD_COUNT = "missingFieldCount";
-    public static final String OUT_OF_ORDER_TIME_COUNT = "outOfOrderTimeStampCount";
-    public static final String FAILED_TRANSFORM_COUNT = "failedTransformCount";
-
     public static final String TIMEOUT = "timeout";
 
     public static final String ANALYSIS_CONFIG = "analysisConfig";
     public static final String ANALYSIS_LIMITS = "analysisLimits";
     public static final String DATA_DESCRIPTION = "dataDescription";
+    public static final String COUNTS = "counts";
     public static final String TRANSFORMS = "transforms";
-
     public static final String DESCRIPTION = "description";
+    public static final String MODEL_DEBUG_CONFIG = "modelDebugConfig";
 
     public static final String TYPE = "job";
 
@@ -83,14 +76,17 @@ public class JobDetails
     private DataDescription m_DataDescription;
     private ModelSizeStats m_ModelSizeStats;
     private List<TransformConfig> m_Transforms;
-    private Counts m_Counts;
+    private ModelDebugConfig m_ModelDebugConfig;
+    private DataCounts m_Counts;
 
     /* These URIs are transient they don't need to be persisted */
     private URI m_Location;
     private URI m_DataEndpoint;
     private URI m_BucketsEndpoint;
+    private URI m_CategoryDefinitionsEndpoint;
     private URI m_RecordsEndpoint;
     private URI m_LogsEndpoint;
+    private URI m_AlertsLongPollEndpoint;
 
 
     /**
@@ -98,7 +94,7 @@ public class JobDetails
      */
     public JobDetails()
     {
-        m_Counts = new Counts();
+        m_Counts = new DataCounts();
         m_Status = JobStatus.CLOSED;
         m_CreateTime = new Date();
     }
@@ -121,8 +117,14 @@ public class JobDetails
 
         m_AnalysisConfig = jobConfig.getAnalysisConfig();
         m_AnalysisLimits = jobConfig.getAnalysisLimits();
-        m_DataDescription = jobConfig.getDataDescription();
         m_Transforms = jobConfig.getTransforms();
+        m_ModelDebugConfig = jobConfig.getModelDebugConfig();
+
+        m_DataDescription = jobConfig.getDataDescription();
+        if (m_DataDescription == null)
+        {
+            m_DataDescription = new DataDescription();
+        }
     }
 
     /**
@@ -327,6 +329,16 @@ public class JobDetails
         m_AnalysisLimits = options;
     }
 
+    public ModelDebugConfig getModelDebugConfig()
+    {
+        return m_ModelDebugConfig;
+    }
+
+    public void setModelDebugConfig(ModelDebugConfig modelDebugConfig)
+    {
+        m_ModelDebugConfig = modelDebugConfig;
+    }
+
     /**
     * The memory usage object
     * @return The ModelSizeStats
@@ -420,6 +432,15 @@ public class JobDetails
         m_BucketsEndpoint = results;
     }
 
+    public URI getCategoryDefinitionsEndpoint()
+    {
+        return m_CategoryDefinitionsEndpoint;
+    }
+
+    public void setCategoryDefinitionsEndpoint(URI categoryDefinitions)
+    {
+        m_CategoryDefinitionsEndpoint = categoryDefinitions;
+    }
 
     /**
      * This Job's results endpoint as the full URL path
@@ -459,18 +480,37 @@ public class JobDetails
     }
 
     /**
+     * This Job's alert long poll endpoint
+     *
+     * @return The Job's logs URI
+     */
+    public URI getAlertsLongPollEndpoint()
+    {
+        return m_AlertsLongPollEndpoint;
+    }
+
+    /**
+     * Set this Job's alert long poll endpoint
+     */
+    public void setAlertsLongPollEndpoint(URI value)
+    {
+        m_AlertsLongPollEndpoint = value;
+    }
+
+    /**
      * Processed records count
      * @return
      */
-    public Counts getCounts()
+    public DataCounts getCounts()
     {
         return m_Counts;
     }
 
     /**
-     * Set the record counts
+     * Processed records count
+     * @return
      */
-    public void setCounts(Counts counts)
+    public void setCounts(DataCounts counts)
     {
         m_Counts = counts;
     }
@@ -517,237 +557,29 @@ public class JobDetails
                 Objects.equals(this.m_CreateTime, that.m_CreateTime) &&
                 Objects.equals(this.m_FinishedTime, that.m_FinishedTime) &&
                 Objects.equals(this.m_LastDataTime, that.m_LastDataTime) &&
-                this.m_Counts.equals(that.m_Counts) &&
                 (this.m_Timeout == that.m_Timeout) &&
                 Objects.equals(this.m_AnalysisConfig, that.m_AnalysisConfig) &&
                 Objects.equals(this.m_AnalysisLimits, that.m_AnalysisLimits) &&
                 Objects.equals(this.m_DataDescription, that.m_DataDescription) &&
+                Objects.equals(this.m_ModelDebugConfig, that.m_ModelDebugConfig) &&
+                Objects.equals(this.m_ModelSizeStats, that.m_ModelSizeStats) &&
+                Objects.equals(this.m_Transforms, that.m_Transforms) &&
+                Objects.equals(this.m_Counts, that.m_Counts) &&
                 Objects.equals(this.m_Location, that.m_Location) &&
                 Objects.equals(this.m_DataEndpoint, that.m_DataEndpoint) &&
+                Objects.equals(this.m_CategoryDefinitionsEndpoint, that.m_CategoryDefinitionsEndpoint) &&
                 Objects.equals(this.m_BucketsEndpoint, that.m_BucketsEndpoint) &&
+                Objects.equals(this.m_AlertsLongPollEndpoint, that.m_AlertsLongPollEndpoint) &&
                 Objects.equals(this.m_RecordsEndpoint, that.m_RecordsEndpoint);
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash(m_JobId, m_Description, m_Status, m_CreateTime,
-                m_FinishedTime, m_LastDataTime, m_Counts, m_Timeout,
-                m_AnalysisConfig, m_AnalysisLimits, m_DataDescription,
-                m_Location, m_DataEndpoint, m_BucketsEndpoint, m_RecordsEndpoint);
-    }
-
-
-    /**
-     * Job processed record counts
-     */
-    public static class Counts
-    {
-        private long m_BucketCount;
-        private long m_ProcessedRecordCount;
-        private long m_ProcessedFieldCount;
-        private long m_InputRecordCount;
-        private long m_InputBytes;
-        private long m_InputFieldCount;
-        private long m_InvalidDateCount;
-        private long m_MissingFieldCount;
-        private long m_OutOfOrderTimeStampCount;
-        private long m_FailedTransformCount;
-
-        /**
-         * The number of bucket results
-         * @return
-         */
-        public long getBucketCount()
-        {
-            return m_BucketCount;
-        }
-
-        public void setBucketCount(long count)
-        {
-            m_BucketCount = count;
-        }
-
-        /**
-         * Number of records processed by this job.
-         * This value is the number of records sent to the job
-         * including any records that my be discarded for any
-         * reason e.g. because the date cannot be read
-         * @return
-         */
-        public long getProcessedRecordCount()
-        {
-            return m_ProcessedRecordCount;
-        }
-
-        public void setProcessedRecordCount(long count)
-        {
-            m_ProcessedRecordCount = count;
-        }
-
-        /**
-         * Number of data points (processed record count * the number
-         * of analysed fields) processed by this job. This count does
-         * not include the time field.
-         * @return
-         */
-        public long getProcessedFieldCount()
-        {
-            return m_ProcessedFieldCount;
-        }
-
-        public void setProcessedFieldCount(long count)
-        {
-            m_ProcessedFieldCount = count;
-        }
-
-        /**
-         * Total number of input records
-         * @return
-         */
-        public long getInputRecordCount()
-        {
-            return m_InputRecordCount;
-        }
-
-        public void setInputRecordCount(long count)
-        {
-            m_InputRecordCount = count;
-        }
-
-        /**
-         * The total number of bytes sent to this job.
-         * This value includes the bytes from any  records
-         * that have been discarded for any  reason
-         * e.g. because the date cannot be read
-         * @return Volume in bytes
-         */
-        public long getInputBytes()
-        {
-            return m_InputBytes;
-        }
-
-        public void setInputBytes(long volume)
-        {
-            m_InputBytes = volume;
-        }
-
-        /**
-         * The total number of fields sent to the job
-         * including fields that aren't analysed.
-         * @return
-         */
-        public long getInputFieldCount()
-        {
-            return m_InputFieldCount;
-        }
-
-        public void setInputFieldCount(long volume)
-        {
-            m_InputFieldCount = volume;
-        }
-
-
-        /**
-         * The number of records with an invalid date field that could
-         * not be parsed or converted to epoch time.
-         * @return
-         */
-        public long getInvalidDateCount()
-        {
-            return m_InvalidDateCount;
-        }
-
-        public void setInvalidDateCount(long count)
-        {
-            m_InvalidDateCount = count;
-        }
-
-        /**
-         * The number of records missing a field that had been
-         * configured for analysis.
-         * @return
-         */
-        public long getMissingFieldCount()
-        {
-            return m_MissingFieldCount;
-        }
-
-        public void setMissingFieldCount(long count)
-        {
-            m_MissingFieldCount = count;
-        }
-
-        /**
-         * The number of records with a timestamp that is
-         * before the time of the latest record. Records should
-         * be in ascending chronological order
-         * @return
-         */
-        public long getOutOfOrderTimeStampCount()
-        {
-            return m_OutOfOrderTimeStampCount;
-        }
-
-        public void setOutOfOrderTimeStampCount(long count)
-        {
-            m_OutOfOrderTimeStampCount = count;
-        }
-
-        /**
-         * The number of transforms that failed.
-         * In theory this could be more than the number of records
-         * if multiple transforms are applied to each record
-         * @return
-         */
-        public long getFailedTransformCount()
-        {
-            return m_FailedTransformCount;
-        }
-
-        public void setFailedTransformCount(long failedTransformCount)
-        {
-            this.m_FailedTransformCount = failedTransformCount;
-        }
-
-
-        /**
-         * Equality test
-         */
-        @Override
-        public boolean equals(Object other)
-        {
-            if (this == other)
-            {
-                return true;
-            }
-
-            if (other instanceof Counts == false)
-            {
-                return false;
-            }
-
-            Counts that = (Counts)other;
-
-            return this.m_BucketCount == that.m_BucketCount &&
-                    this.m_ProcessedRecordCount == that.m_ProcessedRecordCount &&
-                    this.m_ProcessedFieldCount == that.m_ProcessedFieldCount &&
-                    this.m_InputBytes == that.m_InputBytes &&
-                    this.m_InputFieldCount == that.m_InputFieldCount &&
-                    this.m_InputRecordCount == that.m_InputRecordCount &&
-                    this.m_InvalidDateCount == that.m_InvalidDateCount &&
-                    this.m_MissingFieldCount == that.m_MissingFieldCount &&
-                    this.m_OutOfOrderTimeStampCount == that.m_OutOfOrderTimeStampCount &&
-                    this.m_FailedTransformCount == that.m_FailedTransformCount;
-        }
-
-        @Override
-        public int hashCode()
-        {
-            return Objects.hash(m_BucketCount, m_ProcessedRecordCount,
-                    m_ProcessedFieldCount, m_InputBytes, m_InputFieldCount,
-                    m_InputRecordCount, m_InvalidDateCount,
-                    m_MissingFieldCount, m_OutOfOrderTimeStampCount, m_FailedTransformCount);
-        }
+        return Objects.hash(m_JobId, m_Description, m_Status, m_CreateTime, m_FinishedTime,
+                m_LastDataTime, m_Timeout, m_AnalysisConfig, m_AnalysisLimits, m_DataDescription,
+                m_ModelDebugConfig, m_ModelSizeStats, m_Transforms, m_Counts, m_Location,
+                m_DataEndpoint, m_CategoryDefinitionsEndpoint, m_BucketsEndpoint, m_RecordsEndpoint,
+                m_AlertsLongPollEndpoint);
     }
 }

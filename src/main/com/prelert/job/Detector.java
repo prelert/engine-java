@@ -1,6 +1,6 @@
 /****************************************************************************
  *                                                                          *
- * Copyright 2014 Prelert Ltd                                               *
+ * Copyright 2015 Prelert Ltd                                               *
  *                                                                          *
  * Licensed under the Apache License, Version 2.0 (the "License");          *
  * you may not use this file except in compliance with the License.         *
@@ -54,7 +54,11 @@ public class Detector
     public static final String LOW_NZC = "low_nzc";
     public static final String HIGH_NZC = "high_nzc";
     public static final String DISTINCT_COUNT = "distinct_count";
+    public static final String LOW_DISTINCT_COUNT = "low_distinct_count";
+    public static final String HIGH_DISTINCT_COUNT = "high_distinct_count";
     public static final String DC = "dc";
+    public static final String LOW_DC = "low_dc";
+    public static final String HIGH_DC = "high_dc";
     public static final String RARE = "rare";
     public static final String FREQ_RARE = "freq_rare";
     public static final String INFO_CONTENT = "info_content";
@@ -88,6 +92,8 @@ public class Detector
                 LOW_NON_ZERO_COUNT, LOW_NZC,
                 HIGH_NON_ZERO_COUNT, HIGH_NZC,
                 DISTINCT_COUNT, DC,
+                LOW_DISTINCT_COUNT, LOW_DC,
+                HIGH_DISTINCT_COUNT, HIGH_DC,
                 RARE,
                 FREQ_RARE,
                 INFO_CONTENT,
@@ -126,6 +132,8 @@ public class Detector
     public static final Set<String> FIELD_NAME_FUNCTIONS =
             new HashSet<String>(Arrays.<String>asList(new String [] {
                 DISTINCT_COUNT, DC,
+                LOW_DISTINCT_COUNT, LOW_DC,
+                HIGH_DISTINCT_COUNT, HIGH_DC,
                 INFO_CONTENT,
                 LOW_INFO_CONTENT,
                 HIGH_INFO_CONTENT,
@@ -157,11 +165,7 @@ public class Detector
      */
     public static final Set<String> OVER_FIELD_NAME_FUNCTIONS =
             new HashSet<String>(Arrays.<String>asList(new String [] {
-                DISTINCT_COUNT, DC,
-                FREQ_RARE,
-                INFO_CONTENT,
-                LOW_INFO_CONTENT,
-                HIGH_INFO_CONTENT
+                FREQ_RARE
             }));
 
     /**
@@ -169,10 +173,6 @@ public class Detector
      */
     public static final Set<String> NO_BY_FIELD_NAME_FUNCTIONS =
             new HashSet<String>(Arrays.<String>asList(new String [] {
-                DISTINCT_COUNT, DC,
-                INFO_CONTENT,
-                LOW_INFO_CONTENT,
-                HIGH_INFO_CONTENT
             }));
 
     /**
@@ -184,7 +184,6 @@ public class Detector
                 LOW_NON_ZERO_COUNT, LOW_NZC,
                 HIGH_NON_ZERO_COUNT, HIGH_NZC
             }));
-
 
     /**
      * field names cannot contain any of these characters
