@@ -18,6 +18,7 @@
 package com.prelert.rs.data;
 
 import com.fasterxml.jackson.core.io.JsonStringEncoder;
+import com.prelert.job.errorcodes.ErrorCode;
 
 
 /**

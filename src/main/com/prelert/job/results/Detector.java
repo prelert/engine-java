@@ -1,6 +1,6 @@
 /****************************************************************************
  *                                                                          *
- * Copyright 2014 Prelert Ltd                                               *
+ * Copyright 2015 Prelert Ltd                                               *
  *                                                                          *
  * Licensed under the Apache License, Version 2.0 (the "License");          *
  * you may not use this file except in compliance with the License.         *
@@ -16,14 +16,59 @@
  *                                                                          *
  ***************************************************************************/
 
-package com.prelert.job;
+package com.prelert.job.results;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 /**
- * Jobs whether running or complete are in one of these states.
- * When a job is created it is initialised in to the status closed
- * i.e. it is not running.
+ * Represents the anomaly detector.
+ * Only the detector name is serialised anomaly records aren't.
  */
-public enum JobStatus
+@JsonInclude(Include.NON_NULL)
+@JsonIgnoreProperties({"records"})
+public class Detector
 {
-	RUNNING, CLOSED, FAILED;
+    public static final String TYPE = "detector";
+    public static final String NAME = "name";
+    public static final String RECORDS = "records";
+
+    private String m_Name;
+    private List<AnomalyRecord> m_Records;
+
+
+    public Detector()
+    {
+        m_Records = new ArrayList<>();
+    }
+
+    public Detector(String name)
+    {
+        this();
+        setName(name);
+    }
+
+    public String getName()
+    {
+        return m_Name;
+    }
+
+    public void setName(String name)
+    {
+        m_Name = name.intern();
+    }
+
+    public void addRecord(AnomalyRecord record)
+    {
+        m_Records.add(record);
+    }
+
+    public List<AnomalyRecord> getRecords()
+    {
+        return m_Records;
+    }
 }

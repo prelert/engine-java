@@ -1,6 +1,6 @@
 /****************************************************************************
  *                                                                          *
- * Copyright 2014 Prelert Ltd                                               *
+ * Copyright 2015 Prelert Ltd                                               *
  *                                                                          *
  * Licensed under the Apache License, Version 2.0 (the "License");          *
  * you may not use this file except in compliance with the License.         *
@@ -15,15 +15,30 @@
  * limitations under the License.                                           *
  *                                                                          *
  ***************************************************************************/
-
 package com.prelert.job;
 
+
 /**
- * Jobs whether running or complete are in one of these states.
- * When a job is created it is initialised in to the status closed
- * i.e. it is not running.
+ * Simple class to parse and store a flush ID.
  */
-public enum JobStatus
+public class FlushAcknowledgement
 {
-	RUNNING, CLOSED, FAILED;
+    /**
+     * Field Names
+     */
+    public static final String FLUSH = "flush";
+
+    private String m_Id;
+
+    public String getId()
+    {
+        return m_Id;
+    }
+
+
+    public void setId(String id)
+    {
+        m_Id = id;
+    }
 }
+

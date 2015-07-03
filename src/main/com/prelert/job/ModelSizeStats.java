@@ -1,6 +1,6 @@
 /****************************************************************************
  *                                                                          *
- * Copyright 2014 Prelert Ltd                                               *
+ * Copyright 2015 Prelert Ltd                                               *
  *                                                                          *
  * Licensed under the Apache License, Version 2.0 (the "License");          *
  * you may not use this file except in compliance with the License.         *
@@ -15,7 +15,6 @@
  * limitations under the License.                                           *
  *                                                                          *
  ***************************************************************************/
-
 package com.prelert.job;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -50,6 +49,7 @@ public class ModelSizeStats
      * and HARD_LIMIT means that samples have been dropped
      */
     public enum MemoryStatus { OK, SOFT_LIMIT, HARD_LIMIT };
+
 
     private long m_ModelBytes;
     private long m_TotalByFieldCount;

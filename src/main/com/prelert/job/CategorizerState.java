@@ -1,6 +1,6 @@
 /****************************************************************************
  *                                                                          *
- * Copyright 2014 Prelert Ltd                                               *
+ * Copyright 2015 Prelert Ltd                                               *
  *                                                                          *
  * Licensed under the Apache License, Version 2.0 (the "License");          *
  * you may not use this file except in compliance with the License.         *
@@ -15,60 +15,24 @@
  * limitations under the License.                                           *
  *                                                                          *
  ***************************************************************************/
-
 package com.prelert.job;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 /**
- * Utility class for methods involving arrays of transforms
+ * The categorizer state does not need to be loaded on the Java side.
+ * However, the Java process DOES set up a mapping on the Elasticsearch
+ * index to tell Elasticsearch not to analyse the categorizer state documents
+ * in any way.
  */
-public class TransformConfigs
+public class CategorizerState
 {
-    private List<TransformConfig> m_Transforms;
-
-    public TransformConfigs(List<TransformConfig> transforms)
-    {
-        m_Transforms = transforms;
-        if (m_Transforms == null)
-        {
-            m_Transforms = Collections.emptyList();
-        }
-    }
-
-
-    public List<TransformConfig> getTransforms()
-    {
-        return m_Transforms;
-    }
-
-
     /**
-     * Set of all the field names configured as inputs to the transforms
-     * @return
+     * The type of this class used when persisting the data
      */
-    public Set<String> inputFieldNames()
+    public static final String TYPE = "categorizerState";
+
+    private CategorizerState()
     {
-        Set<String> fields = new HashSet<>();
-        for (TransformConfig t : m_Transforms)
-        {
-            fields.addAll(t.getInputs());
-        }
-
-        return fields;
-    }
-
-    public Set<String> outputFieldNames()
-    {
-        Set<String> fields = new HashSet<>();
-        for (TransformConfig t : m_Transforms)
-        {
-            fields.addAll(t.getOutputs());
-        }
-
-        return fields;
     }
 }
+
