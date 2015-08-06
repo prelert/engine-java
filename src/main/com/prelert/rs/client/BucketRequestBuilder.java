@@ -75,7 +75,7 @@ public class BucketRequestBuilder extends BaseJobRequestBuilder<Bucket>
      * Returns a single document with the bucket that was requested
      *
      * @return A {@link SingleDocument} object containing the requested {@link Bucket} object
-     * @throws IOException
+     * @throws IOException If HTTP GET fails
      */
     public SingleDocument<Bucket> get() throws IOException
     {

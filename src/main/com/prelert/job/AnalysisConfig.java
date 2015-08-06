@@ -33,12 +33,12 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 /**
  * Autodetect analysis configuration options describes which fields are
  * analysed and the functions to use.
- * <p/>
+ * <p>
  * The configuration can contain multiple detectors, a new anomaly detector will
  * be created for each detector configuration. The other fields
- * <code>bucketSpan, summaryCountFieldName</code> etc apply to all detectors.<p/>
+ * <code>bucketSpan, summaryCountFieldName</code> etc apply to all detectors.<p>
  * If a value has not been set it will be <code>null</code>
- * Object wrappers are used around integral types & booleans so they can take
+ * Object wrappers are used around integral types &amp; booleans so they can take
  * <code>null</code> values.
  */
 @JsonInclude(Include.NON_NULL)

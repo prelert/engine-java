@@ -30,7 +30,7 @@ import com.prelert.job.transform.TransformConfig;
  * This class represents a configured and created Job. The creation time is
  * set to the time the object was constructed, Status is set to
  * {@link JobStatus#RUNNING} and the finished time and last data time fields
- * are <code>null</code> until the job has seen some data or it is finished
+ * are {@code null} until the job has seen some data or it is finished
  * respectively. If the job was created to read data from a list of files
  * FileUrls will be a non-empty list else the expects data to be streamed to it.
  */
@@ -41,7 +41,7 @@ public class JobDetails
     public static final long DEFAULT_BUCKETSPAN = 300;
 
     /*
-     * Field names used in serialisation
+     * Field names used in serialization
      */
     public static final String ID = "id";
     public static final String STATUS = "status";
@@ -104,8 +104,8 @@ public class JobDetails
      * configuration parameters, where fields are not set in the
      * JobConfiguration defaults will be used.
      *
-     * @param jobId
-     * @param jobConfig
+     * @param jobId the job id
+     * @param jobConfig the job configuration
      */
     public JobDetails(String jobId, JobConfiguration jobConfig)
     {
@@ -132,9 +132,9 @@ public class JobDetails
      * values set in the <code>details</code> argument, any fields set in
      * <code>jobConfig</code> then override the settings in <code>details</code>.
      *
-     * @param jobId
-     * @param details
-     * @param jobConfig
+     * @param jobId the job id
+     * @param details the job details
+     * @param jobConfig the job configuration
      */
 
     public JobDetails(String jobId, JobDetails details, JobConfiguration jobConfig)
@@ -201,7 +201,7 @@ public class JobDetails
      * once set. This method is provided for the Jackson object mapper to
      * de-serialise this class from Json.
      *
-     * @param id
+     * @param id the job id
      */
     public void setId(String id)
     {
@@ -210,7 +210,7 @@ public class JobDetails
 
     /**
      * The job description
-     * @return
+     * @return job description {@code String}
      */
     public String getDescription()
     {
@@ -390,6 +390,8 @@ public class JobDetails
 
     /**
      * Set the URI path of this resource
+     * 
+     * @param location the location {@code URI}
      */
     public void setLocation(URI location)
     {
@@ -408,6 +410,8 @@ public class JobDetails
 
     /**
      * Set this Job's data endpoint
+     * 
+     * @param value the value {@code URI}
      */
     public void setDataEndpoint(URI value)
     {
@@ -426,6 +430,8 @@ public class JobDetails
 
     /**
      * Set this Job's buckets endpoint
+     * 
+     * @param results the results {@code URI}
      */
     public void setBucketsEndpoint(URI results)
     {
@@ -454,6 +460,8 @@ public class JobDetails
 
     /**
      * Set this Job's records endpoint
+     * 
+     * @param results the results {@code URI}
      */
     public void setRecordsEndpoint(URI results)
     {
@@ -473,6 +481,8 @@ public class JobDetails
 
     /**
      * Set this Job's logs endpoint
+     * 
+     * @param value the value {@code URI}
      */
     public void setLogsEndpoint(URI value)
     {
@@ -491,6 +501,8 @@ public class JobDetails
 
     /**
      * Set this Job's alert long poll endpoint
+     * 
+     * @param value the value {@code URI}
      */
     public void setAlertsLongPollEndpoint(URI value)
     {
@@ -499,7 +511,7 @@ public class JobDetails
 
     /**
      * Processed records count
-     * @return
+     * @return the processed records counts {@code DataCounts}
      */
     public DataCounts getCounts()
     {
@@ -508,7 +520,8 @@ public class JobDetails
 
     /**
      * Processed records count
-     * @return
+     * 
+     * @param counts the counts {@code DataCounts}
      */
     public void setCounts(DataCounts counts)
     {

@@ -67,9 +67,8 @@ public class CategoryDefinitionsRequestBuilder extends BaseJobRequestBuilder<Cat
     /**
      * Returns the page with the category definitions that were requested
      *
-     * @return A {@link Pagination} object containing the resulted {@link CategoryDefinition}
-     * objects
-     * @throws IOException
+     * @return A {@link Pagination} object containing the resulted {@link CategoryDefinition} objects
+     * @throws IOException If HTTP GET fails
      */
     public Pagination<CategoryDefinition> get() throws IOException
     {

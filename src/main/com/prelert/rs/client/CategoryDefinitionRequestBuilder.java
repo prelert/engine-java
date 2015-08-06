@@ -31,6 +31,7 @@ public class CategoryDefinitionRequestBuilder extends BaseJobRequestBuilder<Cate
     /**
      * @param client The engine API client
      * @param jobId The Job's unique Id
+     * @param categoryId the job's category id
      */
     public CategoryDefinitionRequestBuilder(EngineApiClient client, String jobId, String categoryId)
     {
@@ -40,10 +41,10 @@ public class CategoryDefinitionRequestBuilder extends BaseJobRequestBuilder<Cate
 
     /**
      * Returns a single document with the category definition that was requested
-     *
+     * 
      * @return A {@link SingleDocument} object containing the requested {@link CategoryDefinition}
      * object
-     * @throws IOException
+     * @throws IOException If HTTP GET fails
      */
     public SingleDocument<CategoryDefinition> get() throws IOException
     {

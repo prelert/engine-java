@@ -28,9 +28,9 @@ import com.prelert.job.transform.TransformConfig;
  * This class encapsulates all the data required to create a new job it
  * does not represent the state of a created job (see {@linkplain JobDetails}
  * for that).
- * <p/>
- * If a value has not been set it will be <code>null</code> Object wrappers
- * are used around integral types & booleans so they can take <code>null</code>
+ * <p>
+ * If a value has not been set it will be {@code null} Object wrappers
+ * are used around integral types &amp; booleans so they can take {@code null}
  * values.
  */
 public class JobConfiguration
@@ -38,8 +38,9 @@ public class JobConfiguration
     public static final int MAX_JOB_ID_LENGTH = 64;
 
     /**
-     * Characters that cannot be in a job id: '\\', '/', '*', '?', '"', '<', '>', '|', ' ', ','
+     * Characters that cannot be in a job id: '\\', '/', '*', '?', '&quot;', '&lt;', '&gt;', '|', ' ', ','
      */
+    // Characters that cannot be in a job id: '\\', '/', '*', '?', '"', '<', '>', '|', ' ', ','
     public static final Set<Character> PROHIBITED_JOB_ID_CHARACTERS_SET;
     public static final String PROHIBITED_JOB_ID_CHARACTERS;
     static
@@ -101,7 +102,7 @@ public class JobConfiguration
 
     /**
      * Set the job's ID
-     * @param name
+     * @param id the id of the job
      */
     public void setId(String id)
     {
@@ -110,7 +111,7 @@ public class JobConfiguration
 
     /**
      * The job's human readable description
-     * @return
+     * @return the job description
      */
     public String getDescription()
     {
@@ -119,7 +120,7 @@ public class JobConfiguration
 
     /**
      * Set the human readable description
-     * @return
+     * @param description the job description
      */
     public void setDescription(String description)
     {
@@ -162,7 +163,7 @@ public class JobConfiguration
      * run job then this is the id of that job. If set then this option
      * overrides the {@linkplain #getAnalysisConfig()} settings i.e. they will
      * be ignored.
-     * @return A String or <code>null</code> if not set
+     * @return A String or {@code null} if not set
      */
     public String getReferenceJobId()
     {
