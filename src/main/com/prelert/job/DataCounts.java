@@ -105,7 +105,8 @@ public class DataCounts
      * This value is the number of records sent passed on to
      * the engine i.e. {@linkplain #getInputRecordCount()} minus
      * records with bad dates or out of order
-     * @return
+     * 
+     * @return Number of records processed by this job {@code long}
      */
     public long getProcessedRecordCount()
     {
@@ -126,7 +127,8 @@ public class DataCounts
      * Number of data points (processed record count * the number
      * of analysed fields) processed by this job. This count does
      * not include the time field.
-     * @return
+     * 
+     * @return Number of data points processed by this job {@code long}
      */
     public long getProcessedFieldCount()
     {
@@ -155,7 +157,8 @@ public class DataCounts
      * + out of order record count.
      *
      * Records with missing fields are counted as they are still written.
-     * @return
+     * 
+     * @return Total number of input records read {@code long}
      */
     @JsonProperty
     public long getInputRecordCount()
@@ -180,7 +183,8 @@ public class DataCounts
      * This value includes the bytes from any  records
      * that have been discarded for any  reason
      * e.g. because the date cannot be read
-     * @return Volume in bytes
+     * 
+     * @return Volume in bytes {@code long}
      */
     public long getInputBytes()
     {
@@ -200,7 +204,8 @@ public class DataCounts
     /**
      * The total number of fields sent to the job
      * including fields that aren't analysed.
-     * @return
+     * 
+     * @return The total number of fields sent to the job {@code long}
      */
     public long getInputFieldCount()
     {
@@ -220,7 +225,8 @@ public class DataCounts
     /**
      * The number of records with an invalid date field that could
      * not be parsed or converted to epoch time.
-     * @return
+     * 
+     * @return The number of records with an invalid date field {@code long}
      */
     public long getInvalidDateCount()
     {
@@ -241,7 +247,8 @@ public class DataCounts
     /**
      * The number of records missing a field that had been
      * configured for analysis.
-     * @return
+     * 
+     * @return The number of records missing a field {@code long}
      */
     public long getMissingFieldCount()
     {
@@ -262,7 +269,8 @@ public class DataCounts
      * The number of records with a timestamp that is
      * before the time of the latest record. Records should
      * be in ascending chronological order
-     * @return
+     * 
+     * @return The number of records with a timestamp that is before the time of the latest record {@code long}
      */
     public long getOutOfOrderTimeStampCount()
     {
@@ -284,7 +292,8 @@ public class DataCounts
      * The number of transforms that failed.
      * In theory this could be more than the number of records
      * if multiple transforms are applied to each record
-     * @return
+     * 
+     * @return The number of transforms that failed {@code long}
      */
     public long getFailedTransformCount()
     {
@@ -298,7 +307,8 @@ public class DataCounts
 
     /**
      * The time of the latest record seen.
-     * @return Latest record time
+     * 
+     * @return Latest record time {@code java.util.Date}
      */
     public Date getLatestRecordTimeStamp()
     {

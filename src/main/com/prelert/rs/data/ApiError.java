@@ -37,7 +37,7 @@ public class ApiError
 	private Throwable m_Cause;
 
 	/**
-	 * Default cons for serialisation (Jackson)
+	 * Default cons for serialization (Jackson)
 	 */
 	public ApiError()
 	{
@@ -47,7 +47,7 @@ public class ApiError
 	/**
 	 * Create a new ApiError from one of the list of error codes.
 	 *
-	 * @param errorCode
+	 * @param errorCode the error code
 	 * @see ErrorCode
 	 */
 	public ApiError(ErrorCode errorCode)
@@ -68,7 +68,7 @@ public class ApiError
 	/**
 	 * Set the error code.
 	 * @see ErrorCode
-	 * @param value
+	 * @param value the ErrorCode value
 	 */
 	public void setErrorCode(ErrorCode value)
 	{
@@ -86,7 +86,7 @@ public class ApiError
 
 	/**
 	 * Set the error message
-	 * @param message
+	 * @param message the error message
 	 */
 	public void setMessage(String message)
 	{
@@ -104,7 +104,7 @@ public class ApiError
 
 	/**
 	 * Set the cause to the error
-	 * @param e
+	 * @param e the {@code Throwable} error
 	 */
 	public void setCause(Throwable e)
 	{
@@ -114,7 +114,7 @@ public class ApiError
 	/**
 	 * JSON representation of this object.
 	 * If cause is null then it is not written and
-	 * if errorCode <= 0 then it is not written.
+	 * if errorCode &lt;= 0 then it is not written.
 	 * @return JSON string
 	 */
 	public String toJson()

@@ -2,3 +2,6 @@ target/
 *.class
 Thumbs.db
 .DS_Store
+.classpath
+.project
+.settings/

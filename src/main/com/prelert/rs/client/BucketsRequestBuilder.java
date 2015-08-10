@@ -146,7 +146,7 @@ public class BucketsRequestBuilder extends BaseJobRequestBuilder<Bucket>
      *
      * @param value The start date as an ISO 8601 String
      * @return this {@code Builder} object
-     * @throws UnsupportedEncodingException
+     * @throws UnsupportedEncodingException If the UTF-8 is not supported
      */
     public BucketsRequestBuilder start(String value) throws UnsupportedEncodingException
     {
@@ -174,7 +174,7 @@ public class BucketsRequestBuilder extends BaseJobRequestBuilder<Bucket>
      * @param value The end date as an ISO 8601 String
      *
      * @return this {@code Builder} object
-     * @throws UnsupportedEncodingException
+     * @throws UnsupportedEncodingException If the UTF-8 is not supported
      */
     public BucketsRequestBuilder end(String value) throws UnsupportedEncodingException
     {
@@ -186,7 +186,7 @@ public class BucketsRequestBuilder extends BaseJobRequestBuilder<Bucket>
      * Returns the page with the buckets that were requested
      *
      * @return A {@link Pagination} object containing the resulted {@link Bucket} objects
-     * @throws IOException
+     * @throws IOException If HTTP GET fails
      */
     public Pagination<Bucket> get() throws IOException
     {

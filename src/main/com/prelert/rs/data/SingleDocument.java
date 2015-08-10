@@ -27,7 +27,7 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
  * the REST API. If the requested document does not exist {@link #isExists()}
  * will be false and {@link #getDocument()} will return <code>null</code>.
  *
- * @param <T>
+ * @param <T> the type of the document
  */
 @JsonPropertyOrder({"documentId", "exists", "type", "document"})
 @JsonInclude(Include.NON_NULL)
@@ -94,7 +94,7 @@ public class SingleDocument<T>
 	 * Set the requested document.
 	 * If the doc is non-null {@link #isExists() Exists} is set to true
 	 * else it is false
-	 * @param doc
+	 * @param doc the requested document
 	 */
 	public void setDocument(T doc)
 	{
