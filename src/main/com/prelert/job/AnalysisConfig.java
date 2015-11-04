@@ -21,6 +21,7 @@ package com.prelert.job;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -54,6 +55,7 @@ public class AnalysisConfig
     public static final String PERIOD = "period";
     public static final String SUMMARY_COUNT_FIELD_NAME = "summaryCountFieldName";
     public static final String DETECTORS = "detectors";
+    public static final String BY_FIELD_VALUE_THRESHOLDS = "byFieldValueThresholds";
 
     private static final String PRELERT_CATEGORY_FIELD = "prelertcategory";
     public static final Set<String> AUTO_CREATED_FIELDS = new HashSet<>(
@@ -69,6 +71,7 @@ public class AnalysisConfig
     private Long m_Period;
     private String m_SummaryCountFieldName;
     private List<Detector> m_Detectors;
+    private HashMap<String, Double> m_ByFieldValueThresholds;
 
     /**
      * Default constructor
@@ -76,6 +79,7 @@ public class AnalysisConfig
     public AnalysisConfig()
     {
         m_Detectors = new ArrayList<>();
+        m_ByFieldValueThresholds = new HashMap<String, Double>();
     }
 
     /**
@@ -177,6 +181,16 @@ public class AnalysisConfig
     public void setDetectors(List<Detector> detectors)
     {
         m_Detectors = detectors;
+    }
+
+    public HashMap<String, Double> getByFieldValueThresholds()
+    {
+        return m_ByFieldValueThresholds;
+    }
+
+    public void setByFieldValueThresholds(HashMap<String, Double> thresholds)
+    {
+        m_ByFieldValueThresholds = thresholds;
     }
 
     /**
