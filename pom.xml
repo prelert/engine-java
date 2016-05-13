@@ -1,29 +1,20 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-
-<!--
-    For building the Prelert Engine REST API client.
--->
-
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>com.prelert.client</groupId>
-  <artifactId>prelertEngineApiClient</artifactId>
-  <version>1.5.0</version>
-  <packaging>jar</packaging>
+  <!--
+    Main Maven build file for the Prelert Engine API client and common
+    data packages
 
-  <name>prelertEngineApiClient</name>
-  <url>http://maven.apache.org</url>
+    2 sub-modules
+      prelert-engine-api-common - Definition of Beans and common interfaces
+      prelert-engine-api-client - Engine API REST client
+    -->
 
-  <description>Prelert Engine API Client</description>
-  <licenses>
-      <license>
-          <name>The Apache Software License, Version 2.0</name>
-          <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
-          <distribution>repo</distribution>
-      </license>
-  </licenses>
+  <groupId>com.prelert</groupId>
+  <version>2.0.9</version>
+  <artifactId>prelert-engine-api-core</artifactId>
+  <packaging>pom</packaging>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -31,153 +22,84 @@
     <maven.compiler.target>1.8</maven.compiler.target>
   </properties>
 
+  <modules>
+    <module>prelert-engine-api-common</module>
+    <module>prelert-engine-api-client</module>
+  </modules>
+
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>log4j</groupId>
+        <artifactId>log4j</artifactId>
+        <version>1.2.17</version>
+      </dependency>
+      <dependency>
+        <groupId>com.fasterxml.jackson.core</groupId>
+        <artifactId>jackson-core</artifactId>
+        <version>2.6.5</version>
+      </dependency>
+      <dependency>
+        <groupId>com.fasterxml.jackson.core</groupId>
+        <artifactId>jackson-annotations</artifactId>
+        <version>2.6.5</version>
+      </dependency>
+      <dependency>
+        <groupId>com.fasterxml.jackson.core</groupId>
+        <artifactId>jackson-databind</artifactId>
+        <version>2.6.5</version>
+      </dependency>
+      <dependency>
+        <groupId>com.google.guava</groupId>
+        <artifactId>guava</artifactId>
+        <version>19.0</version>
+      </dependency>
+
+      <!-- Prelert modules -->
+      <dependency>
+        <groupId>com.prelert</groupId>
+        <artifactId>prelert-engine-api-common</artifactId>
+        <version>2.0.9</version>
+      </dependency>
+      <dependency>
+        <groupId>com.prelert</groupId>
+        <artifactId>prelert-engine-api-client</artifactId>
+        <version>2.0.9</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
   <dependencies>
-    <dependency>
-      <groupId>org.apache.httpcomponents</groupId>
-      <artifactId>httpasyncclient</artifactId>
-      <version>4.0</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.httpcomponents</groupId>
-      <artifactId>httpcore-nio</artifactId>
-      <version>4.3.1</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.httpcomponents</groupId>
-      <artifactId>httpcore</artifactId>
-      <version>4.3.1</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.fasterxml.jackson.core</groupId>
-      <artifactId>jackson-core</artifactId>
-      <version>2.5.2</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.fasterxml.jackson.core</groupId>
-      <artifactId>jackson-annotations</artifactId>
-      <version>2.5.2</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.fasterxml.jackson.core</groupId>
-      <artifactId>jackson-databind</artifactId>
-      <version>2.5.2</version>
-      <scope>compile</scope>
-    </dependency>
     <dependency>
       <groupId>log4j</groupId>
       <artifactId>log4j</artifactId>
-      <version>1.2.17</version>
-      <scope>compile</scope>
+    </dependency>
+
+    <!-- Test only -->
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.8.2</version>
+      <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>com.google.guava</groupId>
-      <artifactId>guava</artifactId>
-      <version>18.0</version>
-      <scope>compile</scope>      
-    </dependency>    
+      <groupId>junit</groupId>
+      <artifactId>junit-dep</artifactId>
+      <version>4.8.2</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.ini4j</groupId>
+      <artifactId>ini4j</artifactId>
+      <version>0.5.2</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-all</artifactId>
+      <version>1.9.5</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
-
-
-  <build>
-    <sourceDirectory>${basedir}/src/main</sourceDirectory>
-    <testSourceDirectory>${basedir}/src/test</testSourceDirectory>
-
-      <plugins>
-      <!-- Compile -->
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.1</version>
-        <configuration>
-          <source>1.8</source>
-          <target>1.8</target>
-          <verbose>false</verbose>
-        </configuration>
-
-        <executions>
-          <!-- Compile main -->
-          <execution>
-            <id>default-compile</id>
-            <phase>compile</phase>
-            <goals>
-              <goal>compile</goal>
-            </goals>
-          </execution>
-
-          <!-- Compile test -->
-          <execution>
-            <id>default-testCompile</id>
-            <phase>test-compile</phase>
-            <goals>
-              <goal>testCompile</goal>
-            </goals>
-            <configuration>
-              <testIncludes>
-                <include>com/prelert/rs/client/**/*.java</include>
-              </testIncludes>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-
-      <!-- Include Source -->
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-source-plugin</artifactId>
-        <version>2.2.1</version>
-        <executions>
-          <execution>
-            <id>attach-sources</id>
-            <goals>
-              <goal>jar</goal>
-            </goals>
-          </execution>
-        </executions>
-
-        <configuration>
-          <sourcepath>${basedir}/src/main</sourcepath>
-          <includes>
-            <include>com/prelert/rs/data/*.java</include>
-            <include>com/prelert/job/*.java</include>
-            <include>com/prelert/rs/client/*.java</include>
-          </includes>
-        </configuration>
-      </plugin>
-
-      <!-- JavaDoc -->
-     <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-javadoc-plugin</artifactId>
-        <version>2.9.1</version>
-
-        <executions>
-          <execution>
-            <id>attach-javadocs</id>
-            <goals>
-              <goal>jar</goal>
-            </goals>
-          </execution>
-        </executions>
-
-        <configuration>
-          <author>false</author>
-          <show>public</show>
-          <sourcepath>${basedir}/src/main</sourcepath>
-          <sourceFileIncludes>
-            <include>com/prelert/rs/data/*.java</include>
-            <include>com/prelert/job/*.java</include>
-            <include>com/prelert/rs/client/*.java</include>
-          </sourceFileIncludes>
-        </configuration>
-      </plugin>
-
-    </plugins>
-
-  </build>
-
 </project>

@@ -11,21 +11,21 @@ Prior to using the client, the Engine API needs to be installed and setup. Pleas
 
 Building
 ---------
-Prelert uses the Maven build system
+Prelert uses the Maven build system.
 
-To compile the code
+To compile the code:
 
     mvn compile
 
-Clean
+Clean:
 
     mvn clean
 
-Create the Java docs
+Create the Java docs:
 
     mvn javadoc:javadoc
 
-Or do it all
+Or do it all:
 
     mvn package
 
@@ -33,7 +33,7 @@ Farequote Example
 ------------------
 As an illustration of the Java client we present a walk-through of creating a new job
 uploading data to the job then finding the most anomalous records in the data. The
-example code is in [Farequote.java](src/main/com/prelert/rs/examples/Farequote.java)
+example code is in [Farequote.java](prelert-engine-api-client/src/main/java/com/prelert/rs/examples/Farequote.java)
 and the data used in the analysis can be downloaded from
 [http://s3.amazonaws.com/prelert_demo/farequote.csv](http://s3.amazonaws.com/prelert_demo/farequote.csv)
 
@@ -41,9 +41,9 @@ Running the Example
 ~~~~~~~~~~~~~~~~~~~
 Run the example from Maven using this command:
 
-    mvn exec:java -Dexec.mainClass="com.prelert.rs.examples.Farequote" -Dexec.args="/path/to/farequote.csv http://localhost:8080/engine/v1"
+    mvn exec:java -Dexec.mainClass="com.prelert.rs.examples.Farequote" -Dexec.args="/path/to/farequote.csv http://localhost:8080/engine/v2"
 
-The first step is to set the job configuration
+The first step is to set the job configuration:
 
     // Configure a detector
     Detector responseTimebyAirline = new Detector();
@@ -57,7 +57,7 @@ The first step is to set the job configuration
 
     // Data is CSV format with time field such as 2014-05-19 00:00:00+0000
     DataDescription dd = new DataDescription();
-    dd.setFormat(DataDescription.DataFormat.DELINEATED);
+    dd.setFormat(DataDescription.DataFormat.DELIMITED);
     dd.setFieldDelimiter(',');
     dd.setTimeField("time");
     dd.setTimeFormat("yyyy-MM-dd HH:mm:ssX");
@@ -68,11 +68,11 @@ The first step is to set the job configuration
     jobConfig.setDataDescription(dd);
 
 The `EngineApiClient` implements `Closeable` and can be used in a try-with-resource
-statement. Here the a new client is created and used to make the new Engine API job.
+statement. Here the a new client is created and used to make the new Engine API job:
 
     try (EngineApiClient engineApiClient = new EngineApiClient())
     {
-        String jobId = engineApiClient.createJob("http://localhost:8080/engine/v1/", jobConfig);
+        String jobId = engineApiClient.createJob("http://localhost:8080/engine/v2/", jobConfig);
         if (jobId == null || jobId.isEmpty())
         {
             s_Logger.error("No Job Id returned by create job");
@@ -87,14 +87,13 @@ statement. Here the a new client is created and used to make the new Engine API 
         ...
     }
 
-If successful the new Job Id is returned otherwise if Job Id is empty an error has occurred.
+If successful the new Job ID is returned otherwise if Job ID is empty an error has occurred.
 The API Client logs any error message received after a call to the REST API and sets it to
 an internal variable accessible through the `getLastError` function. The last error is
 reset after every call to the API.
 
-
-The client's upload functions accept `InputStream` instances in this case a `FileIputStream`
-is used.
+The client's upload functions accept `InputStream` instances. In this case a `FileIputStream`
+is used:
 
     boolean success = engineApiClient.streamingUpload(baseUrl, jobId, fileStream, false);
     if (success == false)
@@ -110,7 +109,7 @@ is used.
 
 The final parameter is a boolean indicating whether the stream is Gzipped compressed.
 If we accidentally set it to `true` for our uncompressed data the API returns
-an error. We can try that out.
+an error. We can try that out:
 
     boolean success = engineApiClient.streamingUpload(baseUrl, jobId, fileStream, true);
     ApiError error = engineApiClient.getLastError();
@@ -126,19 +125,19 @@ Prints out a handy error informing us of the mistake:
 For more information on the possible errors and error codes see the Engine API documentation.
 
 Once the upload is complete close the job to indicate that there is no more data.
-This also causes the analytic process to flush its results buffer.
+This also causes the analytic process to flush its results buffer:
 
     engineApiClient.closeJob(baseUrl, jobId);
 
-We can now request the results using the fluent [BucketsRequestBuilder](src/main/com/prelert/rs/client/BucketsRequestBuilder.java) class. In this example the first 100 buckets are requested, for now we just 
-want the buckets not the anomaly records so the `expand` option is not used.
+We can now request the results using the fluent [BucketsRequestBuilder](prelert-engine-api-client/src/main/java/com/prelert/rs/client/BucketsRequestBuilder.java) class. In this example the first 100 buckets are requested, for now we just
+want the buckets not the anomaly records so the `expand` option is not used:
 
     BucketsRequestBuilder builder = new BucketsRequestBuilder(engineApiClient, jobId).take(100);
     Pagination<Bucket> page = builder.get();
 
-The `get()` method returns a [Pagination](src/main/com/prelert/rs/data/Pagination.java) object containing the buckets. 
+The `get()` method returns a [Pagination](prelert-engine-api-common/src/main/java/com/prelert/rs/data/Pagination.java) object containing the buckets.
 If there are more than one page of results `page.getNextPage()` returns the URI to the next page
-of buckets.
+of buckets:
 
     while (page.getNextPage() != null)
     {
@@ -169,9 +168,8 @@ First sort all the buckets by anomaly:
         }
     });
 
-Now the first bucket in the list has the largest anomaly score, find the Id of that
-bucket and
-
+Now the first bucket in the list has the largest anomaly score, find the ID of that
+bucket:
 
     if (allBuckets.size() > 0)
     {

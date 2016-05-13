@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+<!--
+    For building the Prelert Engine REST API client.
+-->
+
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>com.prelert</groupId>
+    <artifactId>prelert-engine-api-core</artifactId>
+    <version>2.0.9</version>
+  </parent>
+
+  <groupId>com.prelert.client</groupId>
+  <artifactId>prelert-engine-api-client</artifactId>
+  <version>2.0.9</version>
+  <packaging>jar</packaging>
+
+  <name>prelert-engine-api-client</name>
+  <url>http://maven.apache.org</url>
+
+  <description>Prelert Engine API Client</description>
+  <licenses>
+      <license>
+          <name>The Apache Software License, Version 2.0</name>
+          <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+          <distribution>repo</distribution>
+      </license>
+  </licenses>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <maven.compiler.source>1.8</maven.compiler.source>
+    <maven.compiler.target>1.8</maven.compiler.target>
+  </properties>
+
+
+  <dependencies>
+    <dependency>
+      <groupId>org.eclipse.jetty</groupId>
+      <artifactId>jetty-client</artifactId>
+      <version>9.3.7.v20160115</version>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-core</artifactId>
+      <!-- <scope>compile</scope> -->
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-annotations</artifactId>
+      <!-- <scope>compile</scope> -->
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-databind</artifactId>
+      <!-- <scope>compile</scope> -->
+    </dependency>
+
+    <dependency>
+      <groupId>com.prelert</groupId>
+      <artifactId>prelert-engine-api-common</artifactId>
+      <!-- <scope>provided</scope> -->
+    </dependency>
+  </dependencies>
+
+
+  <build>
+    <plugins>
+      <!-- Set main class in jar file -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <version>2.4</version>
+        <configuration>
+          <archive>
+            <manifest>
+              <!-- <addClasspath>true</addClasspath> -->
+              <mainClass>com.prelert.rs.examples.Farequote</mainClass>
+            </manifest>
+          </archive>
+        </configuration>
+      </plugin>
+
+      <!-- Include Source -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-source-plugin</artifactId>
+        <version>2.2.1</version>
+        <executions>
+          <execution>
+            <id>attach-sources</id>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <!-- JavaDoc -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>2.9.1</version>
+
+        <executions>
+          <execution>
+            <id>attach-javadocs</id>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+          </execution>
+        </executions>
+
+        <configuration>
+          <author>false</author>
+          <show>public</show>
+        </configuration>
+      </plugin>
+
+    </plugins>
+  </build>
+</project>
