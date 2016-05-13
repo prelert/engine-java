@@ -81,7 +81,7 @@ public class Farequote
     /**
      * The default base Url
      */
-    static final public String API_BASE_URL = "http://localhost:8080/engine/v1";
+    static final public String API_BASE_URL = "http://localhost:8080/engine/v2";
 
     static final private Logger s_Logger = Logger.getLogger(Farequote.class);
 
@@ -152,7 +152,7 @@ public class Farequote
      */
     static public void printBucketScoresHeader()
     {
-        System.out.println("Time, Bucket Id, Anomaly Score, Unusual Score");
+        System.out.println("Time, Anomaly Score, Unusual Score");
     }
 
 
@@ -166,9 +166,8 @@ public class Farequote
     {
         for (Bucket bucket : buckets)
         {
-            System.out.println(String.format("%s,%s,%f,%f",
+            System.out.println(String.format("%s,%f,%f",
                     bucket.getTimestamp().toString(),
-                    bucket.getId(),
                     bucket.getAnomalyScore(),
                     bucket.getMaxNormalizedProbability()));
         }
@@ -320,11 +319,11 @@ public class Farequote
 
              if (allBuckets.size() > 0)
              {
-                 String bucketId = allBuckets.get(0).getId();
+                 String bucketTime = String.valueOf(allBuckets.get(0).getEpoch());
 
                  // ask for the bucket and its anomaly records
                  SingleDocument<Bucket> bucket = new
-                         BucketRequestBuilder(engineApiClient, jobId, bucketId).expand(true).get();
+                         BucketRequestBuilder(engineApiClient, jobId, bucketTime).expand(true).get();
                  if (bucket.isExists() == false)
                  {
                      // error, where has the bucket gone?

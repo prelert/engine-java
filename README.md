@@ -39,7 +39,7 @@ and the data used in the analysis can be downloaded from
 
 Running the Example
 ~~~~~~~~~~~~~~~~~~~
-Run the example from Maven using this command:
+Run the example from Maven using this command, within the prelert-engine-api-client directory:
 
     mvn exec:java -Dexec.mainClass="com.prelert.rs.examples.Farequote" -Dexec.args="/path/to/farequote.csv http://localhost:8080/engine/v2"
 
@@ -173,11 +173,11 @@ bucket:
 
     if (allBuckets.size() > 0)
     {
-        String bucketId = allBuckets.get(0).getId();
+        String bucketTime = String.valueOf(allBuckets.get(0).getEpoch());
 
         // ask for the bucket and its anomaly records
         SingleDocument<Bucket> bucket =
-                engineApiClient.getBucket(baseUrl, jobId, bucketId, true);
+                engineApiClient.getBucket(baseUrl, jobId, bucketTime, true);
 
         String msg = String.format(
                 "The bucket at time %1$TF %1$TT%1$Tz has the "
@@ -195,27 +195,39 @@ bucket:
     }
 
 Reviewing the output we see that the bucket contains 2 records one of which is highly anomalous:
-
+    
     {
-      "id" : "1403712000",
       "timestamp" : "2014-06-25T16:00:00.000+0000",
-      "anomalyScore" : 82.2778,
-      "maxNormalizedProbability" : 99.9805,
-      "rawAnomalyScore" : 22.3641,
+      "bucketSpan" : 3600,
+      "anomalyScore" : 70.19383,
+      "maxNormalizedProbability" : 98.44456,
+      "initialAnomalyScore" : 60.0985,
       "recordCount" : 1,
       "records" : [ {
         "timestamp" : "2014-06-25T16:00:00.000+0000",
-        "byFieldName" : "airline",
-        "function" : "mean",
-        "anomalyScore" : 82.2778,
         "fieldName" : "responsetime",
-        "normalizedProbability" : 99.9805,
-        "probability" : 6.04077E-36,
+        "byFieldName" : "airline",
+        "function" : "metric",
+        "bucketSpan" : 3600,
+        "anomalyScore" : 70.19383,
+        "probability" : 3.28197E-36,
+        "detectorIndex" : 0,
+        "normalizedProbability" : 98.44456,
+        "initialNormalizedProbability" : 97.1544,
         "byFieldValue" : "AAL",
-        "typical" : 100.852,
-        "actual" : 242.75
+        "functionDescription" : "mean",
+        "typical" : 100.831,
+        "actual" : 242.75,
+        "isInterim" : false
       } ],
-      "eventCount" : 909
+      "eventCount" : 909,
+      "influencers" : [ ],
+      "bucketInfluencers" : [ {
+        "anomalyScore" : 70.19383,
+        "probability" : 5.5367E-25,
+        "influencerFieldName" : "bucketTime"
+      } ],
+      "isInterim" : false
     }
 
 In the bucket at time *2014-06-25T16:00:00.000+0000* the *responsetime* value for the
