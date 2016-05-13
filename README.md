@@ -37,8 +37,8 @@ example code is in [Farequote.java](prelert-engine-api-client/src/main/java/com/
 and the data used in the analysis can be downloaded from
 [http://s3.amazonaws.com/prelert_demo/farequote.csv](http://s3.amazonaws.com/prelert_demo/farequote.csv)
 
-Running the Example
-~~~~~~~~~~~~~~~~~~~
+### Running the Example
+
 Run the example from Maven using this command, within the prelert-engine-api-client directory:
 
     mvn exec:java -Dexec.mainClass="com.prelert.rs.examples.Farequote" -Dexec.args="/path/to/farequote.csv http://localhost:8080/engine/v2"
@@ -195,7 +195,7 @@ bucket:
     }
 
 Reviewing the output we see that the bucket contains 2 records one of which is highly anomalous:
-    
+
     {
       "timestamp" : "2014-06-25T16:00:00.000+0000",
       "bucketSpan" : 3600,
